@@ -3,29 +3,23 @@ var fakeUser = {
   password: 'Shockey'
 };
 
-module.exports = function(app, router, jwt) {
+module.exports = function(app, router, jwt, passport) {
 
-  router.post('/authenticate', function(req, res) {
+  router.post('/authenticate', passport.authenticate('google', { session: false }), function(req, res) {
     console.log(req.body);
 
-    if (req.body.username === 'Kyle' && req.body.password === 'Shockey') {
-      // if user is found and password is right
-        // create a token
-        var token = jwt.sign(fakeUser, app.get('superSecret'), {
-          expiresInMinutes: 1440 // expires in 24 hours
-        });
+    // create a token
+    var token = jwt.sign(fakeUser, app.get('superSecret'), {
+      expiresInMinutes: 1440 // expires in 24 hours
+    });
 
-        // return the information including token as JSON
-        res.json({
-          success: true,
-          message: 'Enjoy your token!',
-          token: token
-        });
-    } else  {
-      res.json({
-        success: false
-      })
-    }
+    // return the information including token as JSON
+    res.json({
+      success: true,
+      message: 'Enjoy your token!',
+      token: token
+    });
+
   })
 
   router.use(function(req, res, next) {
