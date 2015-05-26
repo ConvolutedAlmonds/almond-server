@@ -5,14 +5,22 @@ var bodyParser = require('body-parser')
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 var calendar = google.calendar('v3');
+var redis = require('redis');
+var client = redis.createClient();
+
+client.on('connect', function() {
+  console.log('connected');
+})
 
 app.use(bodyParser.json());
 app.use('/api', apiRouter);
 
 var main = require('./routes/main.js')(app);
+var authenticate = require('./routes/authentication')(app, apiRouter);
 var api = require('./routes/api.js')(app, apiRouter);
 var port = process.env.PORT || 3000;
 
 app.listen(port, function() {
   console.log('Listening on port', port)
 })
+
