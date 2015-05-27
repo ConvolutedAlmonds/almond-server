@@ -34,6 +34,25 @@ module.exports = function(User, nohm, calendar) {
     });
   };
 
+   var getEvents = function(auth, callback) {
+    calendar.events.list({
+      auth: auth,
+      calendarId: 'primary',
+      timeMin: (new Date()).toISOString(),
+      maxResults: 10,
+      singleEvents: true,
+      orderBy: 'startTime'
+    }, function(err, response) {
+      if (err) {
+        console.log('There was an error contacting the Calendar service: ' + err);
+        return;
+      } else {
+        // console.log(response);
+        callback(response);
+      }
+    });
+  }
+
   // authorize(credentials, getEvents);
 
 };
