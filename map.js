@@ -13,6 +13,41 @@ module.exports = function() {
   // var twentyFour = '45 Montgomery Street, San Francisco, CA 94101';
   // var arrivalTime = parseInt((moment().add(1, 'hour').valueOf()) / 1000);
 
-  
+  /**
+   * Possible travel modes for Google Directions API
+   */
+  var travelModes = {
+    driving: 'driving',
+    walking: 'walking',
+    bicycling: 'bicycling',
+    transit: 'transit'
+  };
+
+  /**
+   * Returns qs.stringified Google Directions API request url
+   * Subordinate function- see getAllRoutes below
+   */
+  var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime, departureTime) {
+    var urlParams = {};
+
+    urlParams.key =  directionsApiKey;
+    urlParams.origin = origin;
+    urlParams.destination = destination;
+    urlParams.mode = travelMode;
+
+    if  (arrivalTime && travelMode === 'transit') {
+      urlParams.arrival_time = arrivalTime;
+    } else if (departureTime && travelMode === 'transit') {
+      urlParams.departure_time = departureTime
+    }
+
+    if (travelMode === 'transit') {
+      urlParams.transit_mode = 'rail|bus';
+      urlParams.alternatives = true;
+    }
+
+    this.url = googleDirectionsEndPoint + '?' +
+      qs.stringify(urlParams);
+  };
 };
 
