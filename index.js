@@ -5,29 +5,16 @@ var bodyParser = require('body-parser')
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 var calendar = google.calendar('v3');
-var redis = require('redis');
-var client = redis.createClient();
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
-var googleStrategy = require('./auth-strategies/google-strategy.js')(passport);
 
-var session = require('express-session')
-
-client.on('connect', function() {
-  console.log('connected');
-})
-
-app.use(session({
-  secret: 'something'
-}));
-
+app.use(passport.initialize());
 app.get('/temp', function(req, res) {
   res.send('<!DOCTYPE html><body><a href="/auth/google">Sign In with Google</a></body></html>')
 })
 
-app.get('/auth/google', passport.authenticate('google', { session: false }));
-
 app.use(bodyParser.json());
+require('./auth-strategies/google-strategy.js')(passport, app, jwt);
 
 app.use('/api', apiRouter);
 app.set('superSecret', 'anything');
