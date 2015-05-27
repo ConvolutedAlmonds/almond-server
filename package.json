@@ -23,6 +23,7 @@
     "google-auth-library": "^0.9.6",
     "googleapis": "^2.0.4",
     "jsonwebtoken": "^5.0.1",
+    "nohm": "^0.9.6",
     "passport": "^0.2.2",
     "passport-google-oauth": "^0.2.0",
     "redis": "^0.12.1"

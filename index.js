@@ -8,10 +8,11 @@ var calendar = google.calendar('v3');
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
 
+var nohm = require('nohm').Nohm;
+var db = require('./db/db-config.js')(nohm);
+
+
 app.use(passport.initialize());
-app.get('/temp', function(req, res) {
-  res.send('<!DOCTYPE html><body><a href="/auth/google">Sign In with Google</a></body></html>')
-})
 
 app.use(bodyParser.json());
 require('./auth-strategies/google-strategy.js')(passport, app, jwt);
