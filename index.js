@@ -11,11 +11,14 @@ var passport = require('passport');
 var nohm = require('nohm').Nohm;
 var db = require('./db/db-config.js')(nohm);
 
+app.get('/temp', function(req, res) {
+  res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
+})
 
 app.use(passport.initialize());
 
 app.use(bodyParser.json());
-require('./auth-strategies/google-strategy.js')(passport, app, jwt);
+require('./auth-strategies/google-strategy.js')(passport, app, jwt, nohm);
 
 app.use('/api', apiRouter);
 app.set('superSecret', 'anything');

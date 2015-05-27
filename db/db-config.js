@@ -8,21 +8,27 @@ module.exports = function(nohm) {
 
   nohm.model('User', {
      properties: {
-       googleId: {
-         type: 'string',
-         unique: true,
-         validations: [
-           'notEmpty'
-         ]
-       },
-       googleToken: {
-         type: 'string',
-         unique: true,
-         validations: [
-           'notEmpty'
-         ]
-       },
-
+      googleId: {
+        type: 'string',
+        unique: true,
+        validations: [
+          'notEmpty'
+        ]
+      },
+      googleToken: {
+        type: 'string',
+        unique: true,
+        validations: [
+          'notEmpty'
+        ]
+      },
+      googleTokenSecret: {
+        type: 'string',
+        unique: true,
+        validations: [
+          'notEmpty'
+        ]
+      }
      },
    });
 };
