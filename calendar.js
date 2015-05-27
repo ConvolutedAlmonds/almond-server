@@ -1,39 +1,6 @@
-module.exports = function(User, nohm) {
+module.exports = function(User, nohm, calendar) {
 
   var credentials = require('./config.js');
-
-   var dummyGoogleId = '104821056270933164941';
-
-    setTimeout(function() {
-      var user = nohm.factory('User');
-      
-        User.find({
-          googleId: dummyGoogleId
-        }, function (err, ids) {
-          if (err) {
-            console.log('Error:', err)
-          } else {
-            console.log('Ids:', ids)
-          }
-
-          user.load(ids[0], function (err, properties) {
-            if (err) {
-              console.log('Error:', err)
-            } else {
-              console.log(properties);
-            }
-          });
-        });
-
-    }, 1000)
-    
-
-
-
- 
-
-
-  
 
   var authorize = function(credentials, callback) {
     var clientSecret = credentials.installed.client_secret;
@@ -49,37 +16,23 @@ module.exports = function(User, nohm) {
       expiry_date: profile.exp
     };
 
-    console.log(oauth2Client);
+    // console.log(oauth2Client);
     callback(oauth2Client);
 
-  }
+  };
 
-  var getEvents = function(auth) {
-    calendar.events.list({
-      auth: auth,
-      calendarId: 'primary',
-      timeMin: (new Date()).toISOString(),
-      maxResults: 10,
-      singleEvents: true,
-      orderBy: 'startTime'
+  var getCalendars = function(auth, callback) {
+    calendar.calendarList.list({
+      auth: auth
     }, function(err, response) {
       if (err) {
-        console.log('There was an error contacting the Calendar service: ' + err);
-        return;
-      }
-      var events = response.items;
-      if (events.length == 0) {
-        console.log('No upcoming events found.');
+        console.log('ERROR:', err)
       } else {
-        console.log('Upcoming 10 events:');
-        for (var i = 0; i < events.length; i++) {
-          var event = events[i];
-          var start = event.start.dateTime || event.start.date;
-          console.log('%s - %s', start, JSON.stringify(event.summary));
-        }
+        // console.log(response);
+        callback(response);
       }
     });
-  }
+  };
 
   // authorize(credentials, getEvents);
 
