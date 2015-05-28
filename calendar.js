@@ -1,8 +1,8 @@
-module.exports = function(User, nohm, calendar) {
 
-  var credentials = require('./config.js');
 
-  var authorize = function(credentials, callback) {
+module.exports = {
+
+  authorize: function(credentials, callback) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
@@ -19,9 +19,9 @@ module.exports = function(User, nohm, calendar) {
     // console.log(oauth2Client);
     callback(oauth2Client);
 
-  };
+  },
 
-  var getCalendars = function(auth, callback) {
+  getCalendars: function(calendar, auth, callback) {
     calendar.calendarList.list({
       auth: auth
     }, function(err, response) {
@@ -32,9 +32,9 @@ module.exports = function(User, nohm, calendar) {
         callback(response);
       }
     });
-  };
+  },
 
-   var getEvents = function(auth, callback) {
+  getEvents: function(calendar, auth, callback) {
     calendar.events.list({
       auth: auth,
       calendarId: 'primary',
@@ -52,7 +52,5 @@ module.exports = function(User, nohm, calendar) {
       }
     });
   }
-
-  // authorize(credentials, getEvents);
 
 };

@@ -1,5 +1,8 @@
 module.exports = function(passport, app, jwt, nohm) {
   var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+  var google = require('googleapis');
+  var googleAuth = require('google-auth-library');
+  var calendar = google.calendar('v3');
   var credentials = require('./../config.js');
 
   passport.use(new GoogleStrategy({
@@ -11,20 +14,22 @@ module.exports = function(passport, app, jwt, nohm) {
 
         process.nextTick(function () {
         // create a token
-        var jwtToken = jwt.sign(profile, app.get('superSecret'), {
+        var jwtToken = jwt.sign(profile.id, app.get('superSecret'), {
           expiresInMinutes: 1440 // expires in 24 hours
         });
 
+        // console.log('profile:', profile);
+        console.log(profile.id);
+        console.log('exp:', profile.exp);
         console.log('token:', token);
         console.log('tokenSecret:', tokenSecret);
-        console.log('profile:', profile);
-        // console.log('done:', token);
-        
+
         var user = nohm.factory('User');
         user.p({
           googleId: profile.id,
           googleToken: token,
-          googleTokenSecret: tokenSecret
+          googleTokenSecret: tokenSecret,
+          googleTokenExp: profile.exp.toString()
         });
 
         user.save(function (err) {
@@ -33,10 +38,8 @@ module.exports = function(passport, app, jwt, nohm) {
           } else {
             console.log('User saved');
           }
-         });
+        });
 
-
-        // console.log(profile);
         // To keep the example simple, the user's Google profile is returned to
         // represent the logged-in user.  In a typical application, you would want
         // to associate the Google account with a user record in your database,
@@ -46,7 +49,7 @@ module.exports = function(passport, app, jwt, nohm) {
     }
   ));
   app.get('/auth/google', passport.authenticate('google', { session: false, scope: ['https://www.googleapis.com/auth/plus.login', 'https://www.googleapis.com/auth/calendar.readonly']}));
-  app.get('/auth/google/callback', 
+  app.get('/auth/google/callback',
     passport.authenticate('google', { session: false, failureRedirect: '/temp' }),
     function(req, res) {
       // Successful authentication, redirect home.
