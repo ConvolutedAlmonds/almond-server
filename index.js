@@ -8,8 +8,8 @@ var calendar = google.calendar('v3');
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
 var credentials = require('./config.js');
-var userCalendar = require('./calendar.js');
-var userMap = require('./map.js');
+var userCalendar = require('./external-apis/calendar.js');
+var userMap = require('./external-apis/map.js');
 
 var UserModel = {};
 
