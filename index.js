@@ -7,6 +7,9 @@ var googleAuth = require('google-auth-library');
 var calendar = google.calendar('v3');
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
+var credentials = require('./config.js');
+var userCalendar = require('./calendar.js');
+var userMap = require('./map.js');
 
 var userModel = {};
 
@@ -20,12 +23,11 @@ app.get('/temp', function(req, res) {
 app.use(passport.initialize());
 
 app.use(bodyParser.json());
-require('./auth-strategies/google-strategy.js')(passport, app, jwt, nohm);
+require('./auth-strategies/google-strategy.js')(passport, app, jwt, nohm, credentials);
 app.use('/api', apiRouter);
 app.set('superSecret', 'anything');
 
-var userCalendar = require('./calendar.js')
-var userMap = require('./map.js');
+
 
 var main = require('./routes/main.js')(app);
 var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);

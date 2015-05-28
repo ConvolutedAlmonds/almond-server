@@ -1,9 +1,8 @@
-module.exports = function(passport, app, jwt, nohm) {
+module.exports = function(passport, app, jwt, nohm, credentials) {
   var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
   var google = require('googleapis');
   var googleAuth = require('google-auth-library');
   var calendar = google.calendar('v3');
-  var credentials = require('./../config.js');
 
   passport.use(new GoogleStrategy({
       clientID: credentials.installed.client_id,

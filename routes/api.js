@@ -1,7 +1,8 @@
-module.exports = function(app, router) {
+module.exports = function(app, router, userCalendar, userMap) {
 
   router.get('/upcomingEvents', function(req, res) {
     console.log("Upcoming events");
+    
     res.status(200);
   })
   router.get('/routes', function(req, res) {
