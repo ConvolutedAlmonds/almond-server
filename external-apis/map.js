@@ -58,11 +58,6 @@ module.exports = {
         request(requestUrl).spread(function(response, body) {
             var routes = JSON.parse(body).routes[0];
             callback(routes)
-            // console.log('\n***************** ROUTE: ******************\n')
-            // routes.legs[0].steps.forEach(function(step, index) {
-            //     console.log('\n---------------- LEG ' + index + ' -  ---------------\n')
-            //     console.log(step);
-              // });
         }).catch(function(err) {
             console.error('Error getting routes:', err);
         });
