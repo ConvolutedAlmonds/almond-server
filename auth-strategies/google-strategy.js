@@ -17,8 +17,9 @@ module.exports = function(passport, app, jwt, nohm, credentials) {
           expiresInMinutes: 1440 // expires in 24 hours
         });
 
-        // console.log('profile:', profile);
-        console.log(profile.id);
+        console.log('profile:', profile);
+        console.log('\n**************************\n');
+        console.log('profile id:', profile.id);
         console.log('exp:', profile.exp);
         console.log('token:', token);
         console.log('tokenSecret:', tokenSecret);
@@ -27,8 +28,8 @@ module.exports = function(passport, app, jwt, nohm, credentials) {
         user.p({
           googleId: profile.id,
           googleToken: token,
-          googleTokenSecret: tokenSecret,
-          googleTokenExp: profile.exp.toString()
+          googleTokenSecret: tokenSecret
+          // googleTokenExp: profile.exp.toString()
         });
 
         user.save(function (err) {

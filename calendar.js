@@ -1,4 +1,4 @@
-var authorize = function(credentials, googleAuth, callback) {
+var authorize = function(credentials, googleAuth, user, callback) {
 
   var clientSecret = credentials.installed.client_secret;
   var clientId = credentials.installed.client_id;
@@ -7,10 +7,10 @@ var authorize = function(credentials, googleAuth, callback) {
   var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
   oauth2Client.credentials = {
-    access_token: token,
+    access_token: user.googleToken,
     token_type:'Bearer',
-    refresh_token: tokenSecret,
-    expiry_date: profile.exp
+    refresh_token: user.googleTokenSecret
+    // expiry_date: user.profile.exp
   };
 
   // console.log(oauth2Client);
@@ -37,6 +37,8 @@ module.exports = {
   },
 
   getEvents: function(calendar, googleAuth, credentials, user, callback) {
+
+    console.log('Credentials:', credentials);
     authorize(credentials, googleAuth, user, function(auth) {
       calendar.events.list({
         auth: auth,
