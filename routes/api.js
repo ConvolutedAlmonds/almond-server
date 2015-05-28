@@ -42,11 +42,12 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, c
     var arrivalTime = req.body.arrivalTime;
     var departureTime = req.body.departureTime;
 
-    res.status(200);
     userMap.getAllRoutes(origin, destination, arrivalTime, departureTime, function(routes) {
       console.log('Routes:', routes);
+      res.status(200);
+      res.json({routes: routes})
     })
-    res.json({response: 'success'})
+
   })
 
 };
