@@ -28,23 +28,24 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, c
     var googleId = req.decoded;
 
     retrieveUser(googleId, function(user) {
-      console.log('User props:', user);
-
       userCalendar.getEvents(calendar, googleAuth, credentials, user, function(events) {
-        console.log('\n***** EVENTS *****\n');
-        console.log(events);
-        res.json({events: events});
         res.status(200);
+        res.json({events: events});
       })
-    })
+    });
 
+  });
 
-     
-  })
+  router.post('/routes', function(req, res) {
+    var origin = req.body.origin;
+    var destination = req.body.destination;
+    var arrivalTime = req.body.arrivalTime;
+    var departureTime = req.body.departureTime;
 
-  router.get('/routes', function(req, res) {
-    console.log("Routes");
     res.status(200);
+    userMap.getAllRoutes(origin, destination, arrivalTime, departureTime, function(routes) {
+      console.log('Routes:', routes);
+    })
     res.json({response: 'success'})
   })
 
