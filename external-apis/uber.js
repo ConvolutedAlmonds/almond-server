@@ -22,8 +22,8 @@ var UberEstimateUrls = function(origin, destination, credentials) {
   var priceEstimateUrl = uberApiEndpoint + 'price?' + qs.stringify(priceEstimateParams);
 
   this.urls = {
-    timeEstimateUrl: timeEstimateUrl,
-    priceEstimateUrl: priceEstimateUrl
+    timeEstimate: timeEstimateUrl,
+    priceEstimate: priceEstimateUrl
   };
 };
 
@@ -31,15 +31,39 @@ module.exports = {
 
   getUberEstimates: function(origin, destination, credentials) {
 
-    var requestUrls = new UberEstimateUrls(origin, destination, credentials);
-    console.log(requestUrls.urls.timeEstimateUrl)
-    console.log(requestUrls.urls.priceEstimateUrl)
+    var uberResults = {};
 
-    request(requestUrls.urls.priceEstimateUrl).spread(function(response, body) {
-        console.log('Body:', body);
+    var requestUrls = new UberEstimateUrls(origin, destination, credentials);
+    console.log(requestUrls.urls.timeEstimate);
+    console.log(requestUrls.urls.priceEstimate);
+
+    request(requestUrls.urls.priceEstimate).spread(function(response, body) {
+      // console.log('Body:', body);
+      uberResults.priceEstimate = body;
     }).catch(function(err) {
         console.error('Error getting routes:', err);
     });
+
+    request(requestUrls.urls.timeEstimate).spread(function(response, body) {
+      // console.log('Body:', body);
+      uberResults.timeEstimate = body;
+    }).catch(function(err) {
+        console.error('Error getting routes:', err);
+    });
+
+    var waitForApiResponses = function() {
+      setTimeout(function() {
+        if (Object.keys(uberResults).length === 2) {
+          console.log('\n RESULTS RETURNED\n');
+          console.log(uberResults);
+        } else {
+          waitForApiResponses();
+        }
+      }, 100);
+    };
+
+    waitForApiResponses()
   }
 
 };
+
