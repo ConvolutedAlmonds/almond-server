@@ -1,4 +1,7 @@
 var expect = require('chai').expect;
+var googleAuth = require
+var userCalendar = require('./../external-apis/calendar.js');
+var userMap = require('./../external-apis/map.js');
 
 describe('Array', function(){
   describe('#indexOf()', function(){
@@ -7,4 +10,4 @@ describe('Array', function(){
       expect([1,2,3].indexOf(2)).to.equal(1);
     })
   })
-})
+});

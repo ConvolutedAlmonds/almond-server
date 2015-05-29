@@ -19,7 +19,6 @@
   "dependencies": {
     "bluebird": "^2.9.26",
     "body-parser": "^1.12.4",
-    "chai": "^2.3.0",
     "express": "^4.12.4",
     "express-session": "^1.11.2",
     "google-auth-library": "^0.9.6",
@@ -31,5 +30,9 @@
     "passport-google-oauth": "^0.2.0",
     "redis": "^0.12.1",
     "request": "^2.55.0"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "supertest": "^1.0.1"
   }
 }
