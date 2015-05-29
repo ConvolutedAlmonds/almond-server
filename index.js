@@ -10,6 +10,19 @@ var passport = require('passport');
 var credentials = require('./config.js');
 var userCalendar = require('./external-apis/calendar.js');
 var userMap = require('./external-apis/map.js');
+var uber = require('./external-apis/uber.js');
+
+var hrLocation = {
+  longitude: -122.408978,
+  latitude: 37.783970
+};
+
+var myHouse = {
+  longitude: -122.449582,
+  latitude: 37.710943
+};
+
+// uber.getUberEstimates(hrLocation, myHouse, credentials);
 
 var UserModel = {};
 
@@ -29,7 +42,7 @@ app.set('superSecret', 'anything');
 
 var main = require('./routes/main.js')(app);
 var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
-var api = require('./routes/api.js')(app, apiRouter, nohm, UserModel, userCalendar, userMap, calendar, googleAuth, credentials);
+var api = require('./routes/api.js')(app, apiRouter, nohm, UserModel, userCalendar, userMap, uber, calendar, googleAuth, credentials);
 
 var port = process.env.PORT || 3000;
 
@@ -37,3 +50,6 @@ app.listen(port, function() {
   console.log('Listening on port', port)
 })
 
+
+
+// var test = require('./test/server-spec.js')();

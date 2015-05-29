@@ -29,7 +29,7 @@ var UberEstimateUrls = function(origin, destination, credentials) {
 
 module.exports = {
 
-  getUberEstimates: function(origin, destination, credentials) {
+  getEstimates: function(origin, destination, credentials, callback) {
 
     var uberResults = {};
 
@@ -38,14 +38,12 @@ module.exports = {
     console.log(requestUrls.urls.priceEstimate);
 
     request(requestUrls.urls.priceEstimate).spread(function(response, body) {
-      // console.log('Body:', body);
       uberResults.priceEstimate = body;
     }).catch(function(err) {
         console.error('Error getting routes:', err);
     });
 
     request(requestUrls.urls.timeEstimate).spread(function(response, body) {
-      // console.log('Body:', body);
       uberResults.timeEstimate = body;
     }).catch(function(err) {
         console.error('Error getting routes:', err);
@@ -56,6 +54,7 @@ module.exports = {
         if (Object.keys(uberResults).length === 2) {
           console.log('\n RESULTS RETURNED\n');
           console.log(uberResults);
+          callback(uberResults);
         } else {
           waitForApiResponses();
         }
