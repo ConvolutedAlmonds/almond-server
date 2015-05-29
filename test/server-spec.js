@@ -1,13 +1,68 @@
 var expect = require('chai').expect;
-var googleAuth = require
+var request = require('request');
 var userCalendar = require('./../external-apis/calendar.js');
 var userMap = require('./../external-apis/map.js');
 
-describe('Array', function(){
-  describe('#indexOf()', function(){
-    it('should return -1 when the value is not present', function(){
-      expect([1,2,3].indexOf(5)).to.equal(-1);
-      expect([1,2,3].indexOf(2)).to.equal(1);
-    })
-  })
+describe('Route authentication', function(){
+
+  before(function(done) {    
+    setTimeout(function(){
+      done();
+    }, 1000);
+  });
+
+  describe('Unauthenticated api request to /api/upcomingEvents', function(){
+    it('should return a status code of 403', function(done){
+      request('http://localhost:3000/api/upcomingEvents', function(error, res, body) {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+  });
+
+  describe('Authenticated api request to /api/upcomingEvents', function(){
+    it('should return a status code of 200', function(done){
+      request('http://localhost:3000/api/upcomingEvents', function(error, res, body) {
+        expect(res.statusCode).to.equal(200);
+        done();
+      });
+    });
+  });
+
+  describe('Unauthenticated api request to /api/routes', function(){
+    it('should return a status code of 403', function(done){
+      request('http://localhost:3000/api/routes', function(error, res, body) {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+  });
+
+  describe('Unauthenticated api request to /api/routes', function(){
+    it('should return a status code of 200', function(done){
+      request('http://localhost:3000/api/routes', function(error, res, body) {
+        expect(res.statusCode).to.equal(200);
+        done();
+      });
+    });
+  });
+
+  describe('Unauthenticated api request to /api/uberEstimates', function(){
+    it('should return a status code of 403', function(done){
+      request('http://localhost:3000/api/uberEstimates', function(error, res, body) {
+        expect(res.statusCode).to.equal(403);
+        done();
+      });
+    });
+  });
+
+  describe('Unauthenticated api request to /api/uberEstimates', function(){
+    it('should return a status code of 200', function(done){
+      request('http://localhost:3000/api/uberEstimates', function(error, res, body) {
+        expect(res.statusCode).to.equal(200);
+        done();
+      });
+    });
+  });
+
 });

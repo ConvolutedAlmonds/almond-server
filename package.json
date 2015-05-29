@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node index.js& ./node_modules/.bin/mocha test/server-spec.js; pkill -n node;"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "chai": "^2.3.0",
+    "mocha": "^2.2.5",
     "supertest": "^1.0.1"
   }
 }
