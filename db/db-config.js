@@ -65,7 +65,64 @@ module.exports = function(nohm, UserModel) {
           });
         });
 
+      },
+
+
+      /**
+       * Takes in user's googleId
+       * Deletes users from database
+       */
+      deleteUser: function(googleId, callback) {
+
+        UserModel.model.find({
+          googleId: googleId
+        }, function (err, ids) {
+          if (err) {
+            console.log('Error:', err)
+          } else {
+            console.log('Ids:', ids)
+          }
+
+          var user = nohm.factory('User', ids[0], function (err) {
+            if (err) {
+              console.log('Error:', err); // database or unknown error
+              callback(false);
+            } else {
+              console.log('Found user to delete');
+              user.remove(function (err) {
+                if (err) {
+                  console.log('Error:', err); // database or unknown error
+                  callback(false);
+                } else {
+                  console.log('successfully removed user');
+                  callback(true);
+                }
+              });
+            }
+          });
+        });
+
+      },
+
+      /**
+       * Takes in user's googleId, google Token, google Token secret and callback
+       * Saves new user to database
+       */
+      saveUser: function(googleId, googleToken, googleTokenSecret, callback) {
+        var user = nohm.factory('User');
+        user.p({
+          googleId: googleId,
+          googleToken: googleToken,
+          googleTokenSecret: googleTokenSecret
+          // googleTokenExp: profile.exp.toString()
+        });
+
+        user.save(function (err) {
+          if (err) console.log(err);
+          err ? callback(false) : callback(true)
+        });
       }
     }
+
   });
 };
