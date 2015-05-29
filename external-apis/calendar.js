@@ -38,7 +38,7 @@ module.exports = {
 
   getEvents: function(calendar, googleAuth, credentials, user, callback) {
 
-    console.log('Credentials:', credentials);
+    // console.log('Credentials:', credentials);
     authorize(credentials, googleAuth, user, function(auth) {
       calendar.events.list({
         auth: auth,

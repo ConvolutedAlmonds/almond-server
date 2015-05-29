@@ -54,7 +54,7 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
     var departureTime = req.body.departureTime;
 
     userMap.getAllRoutes(origin, destination, arrivalTime, departureTime, function(routes) {
-      console.log('Routes:', routes);
+      // console.log('Routes:', routes);
       res.status(200);
       res.json({routes: routes})
     });
@@ -69,7 +69,7 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
     var destination = req.body.destination;
 
     uber.getEstimates(origin, destination, credentials, function(estimates) {
-      console.log('Estimates:', estimates);
+      // console.log('Estimates:', estimates);
       res.status(200);
       res.json({estimates: estimates});
 

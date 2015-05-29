@@ -54,7 +54,6 @@ module.exports = {
 
     for (var mode in travelModes) {
         var requestUrl = new GoogleDirectionsUrl(origin, destination, travelModes[mode], arrivalTime, departureTime);
-        console.log(requestUrl);
         request(requestUrl).spread(function(response, body) {
             var routes = JSON.parse(body).routes[0];
             callback(routes)

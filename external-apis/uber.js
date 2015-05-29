@@ -36,8 +36,8 @@ module.exports = {
     var uberResults = {};
 
     var requestUrls = new UberEstimateUrls(origin, destination, credentials);
-    console.log(requestUrls.urls.timeEstimate);
-    console.log(requestUrls.urls.priceEstimate);
+    // console.log(requestUrls.urls.timeEstimate);
+    // console.log(requestUrls.urls.priceEstimate);
 
     request(requestUrls.urls.priceEstimate).spread(function(response, body) {
       uberResults.priceEstimate = body;
@@ -54,8 +54,8 @@ module.exports = {
     var waitForApiResponses = function() {
       setTimeout(function() {
         if (Object.keys(uberResults).length === 2) {
-          console.log('\n RESULTS RETURNED\n');
-          console.log(uberResults);
+          // console.log('\n RESULTS RETURNED\n');
+          // console.log(uberResults);
           callback(uberResults);
         } else {
           waitForApiResponses();
