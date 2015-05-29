@@ -27,3 +27,19 @@ var UberEstimateUrls = function(origin, destination, credentials) {
   };
 };
 
+module.exports = {
+
+  getUberEstimates: function(origin, destination, credentials) {
+
+    var requestUrls = new UberEstimateUrls(origin, destination, credentials);
+    console.log(requestUrls.urls.timeEstimateUrl)
+    console.log(requestUrls.urls.priceEstimateUrl)
+
+    request(requestUrls.urls.priceEstimateUrl).spread(function(response, body) {
+        console.log('Body:', body);
+    }).catch(function(err) {
+        console.error('Error getting routes:', err);
+    });
+  }
+
+};
