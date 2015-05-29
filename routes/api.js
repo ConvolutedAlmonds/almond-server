@@ -1,39 +1,13 @@
 module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, uber, calendar, googleAuth, credentials) {
 
   /**
-   * Takes in user's googleId (available on request obj as req.decoded)
-   * Looks up user in Redis db and returns user's fields
-   */
-  var retrieveUser = function(googleId, callback) {
-    var user = nohm.factory('User');
-
-    UserModel.model.find({
-      googleId: googleId
-    }, function (err, ids) {
-      if (err) {
-        console.log('Error:', err)
-      } else {
-        console.log('Ids:', ids)
-      }
-
-      user.load(ids[0], function (err, properties) {
-        if (err) {
-          console.log('Error:', err)
-        } else {
-          callback(properties);
-        }
-      });
-    });
-  };
-
-  /**
    * Returns all Google Calendar events (for a specific calendar) to the client via JSON
    */
   router.get('/upcomingEvents', function(req, res) {
 
     var googleId = req.decoded;
 
-    retrieveUser(googleId, function(user) {
+    UserModel.methods.getUser(googleId, function(user) {
       userCalendar.getEvents(calendar, googleAuth, credentials, user, function(events) {
         res.status(200);
         res.json({events: events});
