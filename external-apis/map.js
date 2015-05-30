@@ -22,10 +22,10 @@ var travelModes = {
  */
 var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime, departureTime) {
   var urlParams = {};
+  var start = 'origin=' + origin.latitude + ',' + origin.longitude;
+  var end = 'destination=' + destination.latitude + ',' + destination.longitude;
 
-  urlParams.key =  directionsApiKey;
-  urlParams.origin = origin;
-  urlParams.destination = destination;
+  urlParams.key = directionsApiKey;
   urlParams.mode = travelMode;
 
   if  (arrivalTime && travelMode === 'transit') {
@@ -39,7 +39,7 @@ var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime,
     urlParams.alternatives = true;
   }
 
-  this.url = googleDirectionsEndPoint + '?' +
+  this.url = googleDirectionsEndPoint + '?' + start + '&' + end + '&' +
     qs.stringify(urlParams);
 };
 
@@ -61,7 +61,6 @@ module.exports = {
         console.log(requestUrl);
         request(requestUrl).spread(function(response, body) {
             var routes = JSON.parse(body).routes[0];
-
             apiRoutes.modes.push(routes);
         }).catch(function(err) {
             console.error('Error getting routes:', err);
@@ -71,8 +70,6 @@ module.exports = {
     var waitForApiResponses = function() {
       setTimeout(function() {
         if (apiRoutes.modes.length === 4) {
-          // console.log('\n RESULTS RETURNED\n');
-          // console.log(uberResults);
           callback(apiRoutes);
         } else {
           waitForApiResponses();
