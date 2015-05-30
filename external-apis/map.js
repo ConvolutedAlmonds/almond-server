@@ -52,16 +52,37 @@ module.exports = {
    */
   getAllRoutes: function(origin, destination, arrivalTime, departureTime, callback) {
 
+    var apiRoutes = {};
+    apiRoutes.modes = [];
+
     for (var mode in travelModes) {
+
         var requestUrl = new GoogleDirectionsUrl(origin, destination, travelModes[mode], arrivalTime, departureTime);
+        console.log(requestUrl);
         request(requestUrl).spread(function(response, body) {
             var routes = JSON.parse(body).routes[0];
-            callback(routes)
+
+            apiRoutes.modes.push(routes);
         }).catch(function(err) {
             console.error('Error getting routes:', err);
         });
     }
+
+    var waitForApiResponses = function() {
+      setTimeout(function() {
+        if (apiRoutes.modes.length === 4) {
+          // console.log('\n RESULTS RETURNED\n');
+          // console.log(uberResults);
+          callback(apiRoutes);
+        } else {
+          waitForApiResponses();
+        }
+      }, 100);
+    };
+
+    waitForApiResponses();
   }
+
 
 };
 
