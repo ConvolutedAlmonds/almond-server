@@ -17,30 +17,15 @@ var uber = require('./external-apis/uber.js');
 app.use(bodyParser.json());
 
 /**
- * Cors headers??
+ * Cors headers
  */
 app.use(function(req, res, next) {
   // console.log(req.headers.origin);
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
+  res.header('Access-Control-Allow-Origin', "*");
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
   next();
 });
-
-/**
- * Express sessions - not necessary!!
- */
-app.use(session({secret: 'Sshhhhh'}));
-app.use(passport.initialize());
-app.use(passport.session());
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-
 
 /**
  * Middleware to convert destination address on req.body.destination to longitude and latitude coordinates
@@ -59,18 +44,13 @@ app.use(function(req, res, next) {
   }
 });
 
-
-
 var UserModel = {};
-
 var nohm = require('nohm').Nohm;
 require('./db/db-config.js')(nohm, UserModel);
 
 app.get('/temp', function(req, res) {
   res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
 })
-
-
 
 
 require('./auth-strategies/google-strategy.js')(passport, app, jwt, nohm, credentials, UserModel);
