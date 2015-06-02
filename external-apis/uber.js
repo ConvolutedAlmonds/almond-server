@@ -4,7 +4,7 @@ var request = Promise.promisify(require('request'));
 var uberApiEndpoint = 'https://api.uber.com/v1/estimates/';
 
 var UberEstimateUrls = function(origin, destination, credentials) {
-  console.log(credentials);
+  // console.log(credentials);
 
   var timeEstimateParams = {
     server_token: credentials.uber.server_token,

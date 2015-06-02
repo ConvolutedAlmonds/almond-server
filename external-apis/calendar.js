@@ -40,6 +40,7 @@ module.exports = {
 
     // console.log('Credentials:', credentials);
     authorize(credentials, googleAuth, user, function(auth) {
+      // console.log('Auth:', auth)
       calendar.events.list({
         auth: auth,
         calendarId: 'primary',

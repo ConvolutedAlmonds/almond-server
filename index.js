@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var apiRouter = express.Router();
-var session = require('express-session');
 var bodyParser = require('body-parser')
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
