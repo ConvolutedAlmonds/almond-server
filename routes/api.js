@@ -27,10 +27,10 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
     var arrivalTime = req.body.arrivalTime;
     var departureTime = req.body.departureTime;
 
-    userMap.getAllRoutes(origin, destination, arrivalTime, departureTime, function(routes) {
+    userMap.getAllRoutes(origin, destination, arrivalTime, departureTime, function(data) {
       // console.log('Routes:', routes);
       res.status(200);
-      res.json({routes: routes})
+      res.json({data: data})
     });
   });
 

@@ -59,7 +59,7 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
         var routes = JSON.parse(body).routes;
         var travelMode = qs.parse(response.request.path).mode;
         var firstFare = routes[0].fare;
-        
+
         routes.forEach(function(route) {
           route.travelMode = travelMode;
         });
@@ -107,8 +107,18 @@ module.exports = {
         console.log('ERROR:', err);
         callback(err);
       } else {
-        console.log(results);
-        callback(results);
+
+        var data = {};
+        data.results = results;
+        if (results[3] === null) {
+          data.hasTransit = false;
+        } else {
+          data.hasTransit = true;
+        }
+
+        console.log(data);
+        console.log(results.length)
+        callback(data);
       }
     });
   }
