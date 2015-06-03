@@ -45,10 +45,10 @@ app.use(passport.initialize());
 
 app.use(bodyParser.json());
 app.get('/auth/code', function(req, res) {
-	console.log(req.params);
+	console.log(req.query);
 	var options = {
 	  url: "https://accounts.google.com/o/oauth2/token", 
-	  data: "client_id=" + credentials.installed.client_id + "&client_secret=" + credentials.installed.clientSecret + "&redirect_uri=http://localhost/callback" + "&grant_type=authorization_code" + "&code=" + req.params.code,
+	  data: "client_id=" + credentials.installed.client_id + "&client_secret=" + credentials.installed.clientSecret + "&redirect_uri=http://localhost/callback" + "&grant_type=authorization_code" + "&code=" + req.query.code,
 	  method: 'GET'
 	};
 
