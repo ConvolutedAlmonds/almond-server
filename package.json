@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/arosenberg01/almond-server",
   "dependencies": {
+    "async": "^1.2.0",
     "bluebird": "^2.9.26",
     "body-parser": "^1.12.4",
     "express": "^4.12.4",

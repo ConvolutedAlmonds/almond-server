@@ -2,6 +2,7 @@ var qs = require('querystring');
 var moment = require('moment');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
+var async = require('async');
 
 var directionsApiKey = 'AIzaSyA1E7LH5MXVc6ew0fX9K6zC-xLVsCEjDXM'
 var googleDirectionsEndPoint = 'https://maps.googleapis.com/maps/api/directions/json';
@@ -41,7 +42,45 @@ var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime,
 
   this.url = googleDirectionsEndPoint + '?' + start + '&' + end + '&' +
     qs.stringify(urlParams);
+
+  // this.mode = travelMode
 };
+
+var createApiRequests = function(travelModes, origin, destination, arrivalTime, departureTime, callback) {
+  var tasks = [];
+
+  for (var mode in travelModes) {
+    var requestUrl = new GoogleDirectionsUrl(origin, destination, travelModes[mode], arrivalTime, departureTime);
+
+    var wrapper = function(req) {
+      return function(callback) {
+      console.log(req);
+      request(req.url).spread(function(response, body) {
+        var routes = JSON.parse(body).routes;
+        var travelMode = qs.parse(response.request.path).mode;
+        var firstFare = routes[0].fare;
+        
+        routes.forEach(function(route) {
+          route.travelMode = travelMode;
+        });
+
+        if (travelMode !== 'transit' || firstFare) {
+            callback(null, routes);
+        } else {
+            callback(null, null);
+        }
+
+      }).catch(function(err) {
+          console.error('Error getting routes:', err);
+          callback(err, null)
+      });
+      }
+    }
+    tasks.push(wrapper(requestUrl));
+
+  }
+  return tasks;
+}
 
 /**
  * Google Directions API route fetching module
@@ -59,38 +98,20 @@ module.exports = {
    * @param {Object} destination - The coordinates representing the user's destination.
    * @param {string} destination.longitude - The longitude of the user's destination.
    * @param {string} destination.latitude - The latitude of the user's destination.
-   * @param 
    */
   getAllRoutes: function(origin, destination, arrivalTime, departureTime, callback) {
+    var tasks = createApiRequests(travelModes, origin, destination, arrivalTime, departureTime, callback);
 
-    var apiRoutes = {};
-    apiRoutes.modes = [];
-
-    for (var mode in travelModes) {
-
-        var requestUrl = new GoogleDirectionsUrl(origin, destination, travelModes[mode], arrivalTime, departureTime);
-        // console.log(requestUrl);
-        request(requestUrl).spread(function(response, body) {
-            var routes = JSON.parse(body).routes[0];
-            apiRoutes.modes.push(routes);
-        }).catch(function(err) {
-            console.error('Error getting routes:', err);
-        });
-    }
-
-    var waitForApiResponses = function() {
-      setTimeout(function() {
-        if (apiRoutes.modes.length === 4) {
-          callback(apiRoutes);
-        } else {
-          waitForApiResponses();
-        }
-      }, 100);
-    };
-
-    waitForApiResponses();
+    async.parallel(tasks, function(err, results) {
+      if (err) {
+        console.log('ERROR:', err);
+        callback(err);
+      } else {
+        console.log(results);
+        callback(results);
+      }
+    });
   }
-
 
 };
 
