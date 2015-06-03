@@ -45,6 +45,7 @@ app.get('/auth/code', function(req, res) {
 	request(options, function (error, response, body) {
 		console.log(error, response)
 	  if (!error && response.statusCode == 200) {
+	  	
 	    console.log(body) // Show the HTML for the Google homepage. 
 	  }
 	  else
