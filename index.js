@@ -40,7 +40,7 @@ app.post('/auth/code', function(req, res) {
 	console.log(req);
 	var options = {
 	  url: "https://accounts.google.com/o/oauth2/token", 
-	  data: "client_id=" + credentials.installed.client_id + "&client_secret=" + credentials.installed.clientSecret + "&redirect_uri=http://localhost/callback" + "&grant_type=authorization_code" + "&code=" + req.code,
+	  data: "client_id=" + credentials.installed.client_id + "&client_secret=" + credentials.installed.clientSecret + "&redirect_uri=http://localhost/callback" + "&grant_type=authorization_code" + "&code=" + req.data.code,
 	  method: 'GET'
 	};
 
