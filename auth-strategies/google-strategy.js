@@ -17,9 +17,9 @@ module.exports = function(passport, app, jwt, nohm, credentials, UserModel) {
           expiresInMinutes: 1440 // expires in 24 hours
         });
 
-        UserModel.methods.saveUser(profile.id, token, tokenSecret, function(userWasSaved) {
-          userWasSaved ? console.log('User saved') : console.log('Error saving user...');
-        })
+        // UserModel.methods.saveUser(profile.id, token, tokenSecret, function(userWasSaved) {
+        //   userWasSaved ? console.log('User saved') : console.log('Error saving user...');
+        // })
 
         // To keep the example simple, the user's Google profile is returned to
         // represent the logged-in user.  In a typical application, you would want
@@ -37,9 +37,9 @@ module.exports = function(passport, app, jwt, nohm, credentials, UserModel) {
       res.json({token: req.user.token});
   });
 
-  app.get('/auth/google-client', function(req, res) {
-    console.log('client callback');
-    res.json({response: 'Success'})
-  })
+  // app.get('/auth/google-client', function(req, res) {
+  //   console.log('client callback');
+  //   res.json({response: 'Success'})
+  // });
 
 }

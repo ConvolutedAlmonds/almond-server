@@ -44,21 +44,21 @@ app.use(function(req, res, next) {
 });
 
 var UserModel = {};
-var nohm = require('nohm').Nohm;
-require('./db/db-config.js')(nohm, UserModel);
+// var nohm = require('nohm').Nohm;
+// require('./db/db-config.js')(nohm, UserModel);
 
 app.get('/temp', function(req, res) {
   res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
 })
 
 
-require('./auth-strategies/google-strategy.js')(passport, app, jwt, nohm, credentials, UserModel);
+// require('./auth-strategies/google-strategy.js')(passport, app, jwt, null, credentials, UserModel);
 app.use('/api', apiRouter);
-app.set('superSecret', 'anything');
+// app.set('superSecret', 'anything');
 
 var main = require('./routes/main.js')(app);
-var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
-var api = require('./routes/api.js')(app, apiRouter, nohm, UserModel, userCalendar, userMap, uber, calendar, googleAuth, credentials);
+// var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
+var api = require('./routes/api.js')(app, apiRouter, null, UserModel, userCalendar, userMap, uber, calendar, googleAuth, credentials);
 
 var port = process.env.PORT || 3000;
 
