@@ -1,5 +1,3 @@
-console.log("#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{}}}}}}}}}}}}}}}}}}}")
-
 var express = require('express');
 var app = express();
 var apiRouter = express.Router();
@@ -14,6 +12,7 @@ var userCalendar = require('./external-apis/calendar.js');
 var userMap = require('./external-apis/map.js');
 var uber = require('./external-apis/uber.js');
 var http = require('http');
+var cors = require('cors');
 
 var hrLocation = {
   longitude: -122.408978,
@@ -34,7 +33,7 @@ require('./db/db-config.js')(nohm, UserModel);
 
 var request = require('request');
 
-
+app.use(cors());
 
 app.get('/auth/code', function(req, res) {
 	var options = {
