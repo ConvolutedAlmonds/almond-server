@@ -46,7 +46,7 @@ app.use(passport.initialize());
 app.use(bodyParser.json());
 app.get('/auth/code', function(req, res) {
 	console.log(req.query);
-	var code = '4/_KX5HZMEoS93VzRAMNW37opldW8P7U08GKr188hYkuI.Uq_Uw6EP1b0cEnp6UAPFm0GoMJt3mwI';
+	var code = req.query.code || '4/_KX5HZMEoS93VzRAMNW37opldW8P7U08GKr188hYkuI.Uq_Uw6EP1b0cEnp6UAPFm0GoMJt3mwI';
 
 	var url = 'https://accounts.google.com/o/oauth2/token';
   var payload = {
