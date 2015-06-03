@@ -45,14 +45,7 @@ app.get('/auth/code', function(req, res) {
 
 	request(options, function (error, response, body) {
 
-	    console.log("got request");
-	  if (!error && response.statusCode == 200) {
-
-	  }
-	  else
-	  {
-	  	res.json({result: 'ERROR'})
-	  }
+	    console.log(body);
 	})
 });
 
