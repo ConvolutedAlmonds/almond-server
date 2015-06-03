@@ -36,6 +36,14 @@ var request = require('request');
 
 app.use(cors());
 
+
+app.get('/temp', function(req, res) {
+  res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
+})
+
+app.use(passport.initialize());
+
+app.use(bodyParser.json());
 app.post('/auth/code', function(req, res) {
 	console.log(req);
 	var options = {
@@ -51,14 +59,6 @@ app.post('/auth/code', function(req, res) {
 	    console.log(body);
 	})
 });
-
-app.get('/temp', function(req, res) {
-  res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
-})
-
-app.use(passport.initialize());
-
-app.use(bodyParser.json());
 require('./auth-strategies/google-strategy.js')(passport, app, jwt, nohm, credentials);
 app.use('/api', apiRouter);
 app.set('superSecret', 'anything');
