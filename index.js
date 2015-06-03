@@ -44,10 +44,11 @@ app.get('/auth/code', function(req, res) {
 	};
 
 	request(options, function (error, response, body) {
-		console.log(error, response)
+		
+	    console.log("got request");
 	  if (!error && response.statusCode == 200) {
 
-	    console.log(body) // Show the HTML for the Google homepage. 
+	    res.json({result:})
 	  }
 	  else
 	  {
