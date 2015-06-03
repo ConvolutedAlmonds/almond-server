@@ -36,11 +36,11 @@ var request = require('request');
 
 app.use(cors());
 
-app.get('/auth/code', function(req, res) {
+app.post('/auth/code', function(req, res) {
 	console.log(req);
 	var options = {
 	  url: "https://accounts.google.com/o/oauth2/token", 
-	  data: "client_id=" + credentials.installed.client_id + "&client_secret=" + credentials.installed.clientSecret + "&redirect_uri=http://localhost/callback" + "&grant_type=authorization_code" + "&code=" + req.data.code,
+	  data: "client_id=" + credentials.installed.client_id + "&client_secret=" + credentials.installed.clientSecret + "&redirect_uri=http://localhost/callback" + "&grant_type=authorization_code" + "&code=" + req.code,
 	  method: 'GET'
 	};
 
