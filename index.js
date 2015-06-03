@@ -11,6 +11,7 @@ var credentials = require('./config.js');
 var userCalendar = require('./external-apis/calendar.js');
 var userMap = require('./external-apis/map.js');
 var uber = require('./external-apis/uber.js');
+var http = require('http');
 
 var hrLocation = {
   longitude: -122.408978,
@@ -28,6 +29,29 @@ var UserModel = {};
 
 var nohm = require('nohm').Nohm;
 require('./db/db-config.js')(nohm, UserModel);
+
+var request = require('request');
+
+
+
+app.get('/auth/code', function(req, res) {
+	var options = {
+	  url: "https://accounts.google.com/o/oauth2/token", 
+	  data: "client_id=" + credentials.installed.client_id + "&client_secret=" + credentials.installed.clientSecret + "&redirect_uri=http://localhost/callback" + "&grant_type=authorization_code" + "&code=" + req.code,
+	  method: 'GET'
+	};
+
+	request(options, function (error, response, body) {
+		console.log(error, response)
+	  if (!error && response.statusCode == 200) {
+	    console.log(body) // Show the HTML for the Google homepage. 
+	  }
+	  else
+	  {
+	  	res.json({result: 'ERROR'})
+	  }
+	})
+});
 
 app.get('/temp', function(req, res) {
   res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
