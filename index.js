@@ -44,11 +44,10 @@ app.get('/auth/code', function(req, res) {
 	};
 
 	request(options, function (error, response, body) {
-		
+
 	    console.log("got request");
 	  if (!error && response.statusCode == 200) {
 
-	    res.json({result:})
 	  }
 	  else
 	  {
