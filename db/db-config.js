@@ -1,5 +1,5 @@
 module.exports = function(nohm, UserModel) {
-
+  /*
   var redis = require('redis').createClient();
 
   redis.on("connect", function (err) {
@@ -37,5 +37,5 @@ module.exports = function(nohm, UserModel) {
         // }
       }
      });
-  });
+  });*/
 };
