@@ -43,7 +43,6 @@ var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime,
   this.url = googleDirectionsEndPoint + '?' + start + '&' + end + '&' +
     qs.stringify(urlParams);
 
-  // this.mode = travelMode
 };
 
 var secondsToReadable = function(numSeconds) {
@@ -51,8 +50,6 @@ var secondsToReadable = function(numSeconds) {
   var duration = moment.duration(numSeconds, 'seconds');
   var hours = Math.floor(duration.asHours());
   var mins = Math.floor(duration.asMinutes()) - hours * 60;
-
-  console.log("hours:" + hours + " mins:" + mins);
 
   if (hours) {
     if (hours > 1) {
@@ -62,12 +59,7 @@ var secondsToReadable = function(numSeconds) {
     }
   }
 
-  if (mins > 1) {
-    result += mins + ' mins ';
-  } else {
-    result += mins + ' hour '
-  }
-
+  mins > 1 ? result += mins + ' mins ' : result += mins + ' hour '
 
   return result;
 };
@@ -83,45 +75,54 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
       request(req.url).spread(function(response, body) {
         var routes = JSON.parse(body).routes;
         var travelMode = qs.parse(response.request.path).mode;
-        var firstFare = routes[0].fare;
+        var isTransitRoute = routes[0].fare;
 
         routes.forEach(function(route) {
+
           route.travelMode = travelMode;
           var leg = route.legs[0];
           var steps = leg.steps
           route.distance = leg.distance;
           route.duration = leg.duration;
-
-          console.log('\n --- ROUTE --- \n')
-          console.log(route);
-          // console.log('\n++ leg ++\n');
-          // console.log(leg);
-          console.log('\n** STEPS **\n');
-          console.log(steps);
-
           var modeDurations = {};
 
           steps.forEach(function(step) {
             if (!modeDurations[step.travel_mode]) {
               modeDurations[step.travel_mode] = 0;
             }
-
             modeDurations[step.travel_mode] += step.duration.value;
 
-
           });
-
-          console.log('\n') + 
-          console.log(modeDurations)
-          console.log('\n');
 
           route.durationByMode = [];
 
           for (var mode in modeDurations) {
-            console.log(secondsToReadable(modeDurations[mode]));
+            var tuple = [];
+            tuple.push(mode.toLowerCase());
+            tuple.push(secondsToReadable(modeDurations[mode]));
+            route.durationByMode.push(tuple);
           }
 
+          if (isTransitRoute && route.summary === '') {
 
+            route.summary += 'Via ';
+            var agencies = {};
+
+            steps.forEach(function(step) {
+              if (step.transit_details) {
+                var agencyName = step.transit_details.line.agencies[0].name;
+                if (agencyName === 'Bay Area Rapid Transit') {
+                  agencyName = 'BART'
+                }
+                agencies[agencyName] = agencyName;
+              }
+            });
+
+            for (var name in agencies) {
+              route.summary += name + ', '
+            }
+            route.summary = route.summary.substring(0, route.summary.length - 2);
+          }
 
         });
 
@@ -129,7 +130,7 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
          * The 'transit' mode API call will return a walking route if origin and destination are two close together.
          * If this happens, the route is not returned to the client.
          */
-        if (travelMode !== 'transit' || firstFare) {
+        if (travelMode !== 'transit' || isTransitRoute) {
             callback(null, routes);
         } else {
             callback(null, null);
@@ -180,22 +181,8 @@ module.exports = {
         } else {
           data.hasTransit = true;
           var transitRoutes = data.results[3]
-          // console.log(transitRoutes);
-          // transitRoutes.forEach(function(route) {
-          //   console.log('\n--- ROUTE ---\n');
-          //   console.log(route);
-
-          //   console.log('\n++ LEGS ++\n');
-          //   var legs = route.legs;
-          //   console.log(legs);
-
-          //   console.log('\n** STEPS **\n');
-          //   var steps = legs[0].steps;
-          //   console.log(steps);
-          // });
         }
 
-        // console.log(data.results);
         callback(data);
       }
     });
