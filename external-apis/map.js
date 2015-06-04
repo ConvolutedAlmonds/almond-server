@@ -46,6 +46,32 @@ var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime,
   // this.mode = travelMode
 };
 
+var secondsToReadable = function(numSeconds) {
+  var result = '';
+  var duration = moment.duration(numSeconds, 'seconds');
+  var hours = Math.floor(duration.asHours());
+  var mins = Math.floor(duration.asMinutes()) - hours * 60;
+
+  console.log("hours:" + hours + " mins:" + mins);
+
+  if (hours) {
+    if (hours > 1) {
+      result += hours + ' hours ';
+    } else {
+      result += hours + ' hour '
+    }
+  }
+
+  if (mins > 1) {
+    result += mins + ' mins ';
+  } else {
+    result += mins + ' hour '
+  }
+
+
+  return result;
+};
+
 var createApiRequests = function(travelModes, origin, destination, arrivalTime, departureTime, callback) {
   var tasks = [];
 
@@ -54,7 +80,6 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
 
     var wrapper = function(req) {
       return function(callback) {
-      console.log(req);
       request(req.url).spread(function(response, body) {
         var routes = JSON.parse(body).routes;
         var travelMode = qs.parse(response.request.path).mode;
@@ -62,8 +87,48 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
 
         routes.forEach(function(route) {
           route.travelMode = travelMode;
+          var leg = route.legs[0];
+          var steps = leg.steps
+          route.distance = leg.distance;
+          route.duration = leg.duration;
+
+          console.log('\n --- ROUTE --- \n')
+          console.log(route);
+          // console.log('\n++ leg ++\n');
+          // console.log(leg);
+          console.log('\n** STEPS **\n');
+          console.log(steps);
+
+          var modeDurations = {};
+
+          steps.forEach(function(step) {
+            if (!modeDurations[step.travel_mode]) {
+              modeDurations[step.travel_mode] = 0;
+            }
+
+            modeDurations[step.travel_mode] += step.duration.value;
+
+
+          });
+
+          console.log('\n') + 
+          console.log(modeDurations)
+          console.log('\n');
+
+          route.durationByMode = [];
+
+          for (var mode in modeDurations) {
+            console.log(secondsToReadable(modeDurations[mode]));
+          }
+
+
+
         });
 
+        /**
+         * The 'transit' mode API call will return a walking route if origin and destination are two close together.
+         * If this happens, the route is not returned to the client.
+         */
         if (travelMode !== 'transit' || firstFare) {
             callback(null, routes);
         } else {
@@ -114,10 +179,23 @@ module.exports = {
           data.hasTransit = false;
         } else {
           data.hasTransit = true;
+          var transitRoutes = data.results[3]
+          // console.log(transitRoutes);
+          // transitRoutes.forEach(function(route) {
+          //   console.log('\n--- ROUTE ---\n');
+          //   console.log(route);
+
+          //   console.log('\n++ LEGS ++\n');
+          //   var legs = route.legs;
+          //   console.log(legs);
+
+          //   console.log('\n** STEPS **\n');
+          //   var steps = legs[0].steps;
+          //   console.log(steps);
+          // });
         }
 
-        console.log(data);
-        console.log(results.length)
+        // console.log(data.results);
         callback(data);
       }
     });
