@@ -8,7 +8,7 @@ var directionsApiKey = 'AIzaSyA1E7LH5MXVc6ew0fX9K6zC-xLVsCEjDXM'
 var googleDirectionsEndPoint = 'https://maps.googleapis.com/maps/api/directions/json';
 
 /**
- * Possible travel modes for Google Directions API. Only called internally from getAllRoutes.
+ * Possible travel modes for Google Directions API.
  */
 var travelModes = {
   driving: 'driving',
@@ -18,7 +18,7 @@ var travelModes = {
 };
 
 /**
- * Returns stringified url for the Google Directions API. Only called internally from getAllRoutes.
+ * Returns stringified url for the Google Directions API.
  * @constructor
  */
 var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime, departureTime) {
@@ -29,7 +29,7 @@ var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime,
   urlParams.key = directionsApiKey;
   urlParams.mode = travelMode;
 
-  if  (arrivalTime && travelMode === 'transit') {
+  if (arrivalTime && travelMode === 'transit') {
     urlParams.arrival_time = arrivalTime;
   } else if (departureTime && travelMode === 'transit') {
     urlParams.departure_time = departureTime
@@ -45,6 +45,9 @@ var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime,
 
 };
 
+/**
+ * Converts number of seconds to readable format - 1 hour 23 mins, etc. 
+ */
 var secondsToReadable = function(numSeconds) {
   var result = '';
   var duration = moment.duration(numSeconds, 'seconds');
@@ -64,6 +67,10 @@ var secondsToReadable = function(numSeconds) {
   return result;
 };
 
+/**
+ * Builds up tasks array of Google Directions API calls to pass to async.parallel.
+ * Parses some of the response data to add total duration, total distance, and related travel mode summaries to the top level of each route object.
+ */
 var createApiRequests = function(travelModes, origin, destination, arrivalTime, departureTime, callback) {
   var tasks = [];
 
@@ -105,7 +112,6 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
 
           if (isTransitRoute && route.summary === '') {
 
-            route.summary += 'Via ';
             var agencies = {};
 
             steps.forEach(function(step) {
@@ -121,13 +127,14 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
             for (var name in agencies) {
               route.summary += name + ', '
             }
+
             route.summary = route.summary.substring(0, route.summary.length - 2);
           }
 
         });
 
         /**
-         * The 'transit' mode API call will return a walking route if origin and destination are two close together.
+         * The 'transit' mode API call will return a walking route if origin and destination areo close together.
          * If this happens, the route is not returned to the client.
          */
         if (travelMode !== 'transit' || isTransitRoute) {
@@ -180,7 +187,6 @@ module.exports = {
           data.hasTransit = false;
         } else {
           data.hasTransit = true;
-          var transitRoutes = data.results[3]
         }
 
         callback(data);
