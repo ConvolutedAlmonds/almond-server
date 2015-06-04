@@ -1,4 +1,5 @@
 node_modules/
+db/local_config.js
 
 dump.rdb
 # Elastic Beanstalk Files

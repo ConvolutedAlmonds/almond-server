@@ -1,3 +1,35 @@
+var Bookshelf = require('bookshelf');
+
+var knex =  !process.env.DATABASE_URL ? require('./local_config.js') :
+  require('knex')({
+  client: 'pg',
+  connection: process.env.DATABASE_URL
+});
+
+var db = require('bookshelf')(knex);
+db.plugin('registry');
+
+/**
+ * Creates a users table in connected db if table is not already found.
+ */
+db.knex.schema.hasTable('users').then(function(exists) {
+  if (!exists) {
+    db.knex.schema.createTable('users', function (user) {
+      user.increments('id').primary();
+      user.string('googleId', 255).unique();
+      user.string('googleToken', 255);
+      user.string('googleTokenSecret', 255);
+      user.string('googleTokenExp', 255);
+      user.timestamps();
+    }).then(function (table) {
+      console.log('Created Table', table);
+    });
+  }
+});
+
+module.exports = db;
+
+
 // module.exports = function(nohm, UserModel) {
 
 //   var redis = require('redis').createClient();

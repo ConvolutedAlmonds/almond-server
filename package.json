@@ -21,6 +21,7 @@
     "async": "^1.2.0",
     "bluebird": "^2.9.26",
     "body-parser": "^1.12.4",
+    "bookshelf": "^0.8.1",
     "express": "^4.12.4",
     "express-session": "^1.11.2",
     "geocoder": "^0.2.2",
@@ -32,6 +33,7 @@
     "nohm": "^0.9.6",
     "passport": "^0.2.2",
     "passport-google-oauth": "^0.2.0",
+    "pg": "^4.3.0",
     "redis": "^0.12.1",
     "request": "^2.55.0"
   },
