@@ -46,14 +46,14 @@ module.exports = {
     async.parallel({
       priceEstimate: function(cb) {
         request(requestUrls.urls.priceEstimate).spread(function(response, body) {
-          cb(null, body);
+          cb(null, JSON.parse(body));
         }).catch(function(err) {
             console.error('Error getting routes:', err);
         });
       },
       timeEstimate: function(cb) {
         request(requestUrls.urls.timeEstimate).spread(function(response, body) {
-          cb(null, body);
+          cb(null, JSON.parse(body));
         }).catch(function(err) {
             console.error('Error getting routes:', err);
         });
@@ -65,6 +65,7 @@ module.exports = {
         console.log('Error collecting async results:', err);
         callback(err);
       } else {
+        console.log(results);
         callback(results);
       }
     });
