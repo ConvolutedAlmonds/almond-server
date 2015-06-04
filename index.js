@@ -12,6 +12,7 @@ var credentials = require('./config.js');
 var userCalendar = require('./external-apis/calendar.js');
 var userMap = require('./external-apis/map.js');
 var uber = require('./external-apis/uber.js');
+var User = require('./db/models/user.js');
 
 app.use(bodyParser.json());
 
@@ -19,7 +20,6 @@ app.use(bodyParser.json());
  * Cors headers
  */
 app.use(function(req, res, next) {
-  // console.log(req.headers.origin);
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', "*");
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
@@ -43,10 +43,6 @@ app.use(function(req, res, next) {
   }
 });
 
-var UserModel = {};
-// var nohm = require('nohm').Nohm;
-// require('./db/db-config.js')(nohm, UserModel);
-
 app.get('/temp', function(req, res) {
   res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
 })
@@ -58,7 +54,7 @@ app.use('/api', apiRouter);
 
 var main = require('./routes/main.js')(app);
 // var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
-var api = require('./routes/api.js')(app, apiRouter, null, UserModel, userCalendar, userMap, uber, calendar, googleAuth, credentials);
+var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
 
 var port = process.env.PORT || 3000;
 

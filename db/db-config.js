@@ -1,9 +1,14 @@
 var Bookshelf = require('bookshelf');
 
-var knex =  !process.env.DATABASE_URL ? require('./local_config.js') :
+var knex =  !process.env.RDS_HOSTNAME ? require('./local_config.js') :
   require('knex')({
   client: 'pg',
-  connection: process.env.DATABASE_URL
+  connection: {
+    host     : process.env.RDS_HOSTNAME,
+    user     : process.env.RDS_USERNAME,
+    password : process.env.RDS_PASSWORD,
+    port     : process.env.RDS_PORT
+  }
 });
 
 var db = require('bookshelf')(knex);
