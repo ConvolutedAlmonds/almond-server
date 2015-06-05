@@ -1,5 +1,8 @@
 var Bookshelf = require('bookshelf');
 
+console.log('Database Info');
+console.log(process.env.RDS_HOSTNAME, process.env.RDS_USERNAME, process.env.RDS_PASSWORD, process.env.RDS_PORT);
+
 var knex =  !process.env.RDS_HOSTNAME ? require('./local_config.js') :
   require('knex')({
   client: 'pg',
