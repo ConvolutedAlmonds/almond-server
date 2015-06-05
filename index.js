@@ -48,6 +48,25 @@ app.get('/temp', function(req, res) {
   res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
 })
 
+app.get('/auth/code', function(req, res) {
+  console.log(req.query);
+  var code = req.query.code || '4/bIpLbbfrtcXw4cwdXMXrIWQJizhPjUggK_jbNmiM0uc.0u9pik9gXK4QEnp6UAPFm0E02rd3mwI';
+
+  var url = 'https://accounts.google.com/o/oauth2/token';
+  var payload = {
+    grant_type: 'authorization_code',
+    code: code,
+    client_id: credentials.installed.client_id,
+    client_secret: credentials.installed.client_secret,
+    redirect_uri: 'http://localhost/callback'
+  };
+
+  request.post(url, { form: payload }, function(error, response, body) {
+    console.log(body);
+  });
+});
+
+
 
 // require('./auth-strategies/google-strategy.js')(passport, app, jwt, null, credentials, UserModel);
 app.use('/api', apiRouter);
