@@ -10,6 +10,7 @@ var knex =  !process.env.RDS_HOSTNAME ? require('./local_config.js') :
     host     : process.env.RDS_HOSTNAME,
     user     : process.env.RDS_USERNAME,
     password : process.env.RDS_PASSWORD,
+    database: 'ebdb',
     port     : process.env.RDS_PORT
   }
 });
