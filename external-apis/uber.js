@@ -65,7 +65,7 @@ module.exports = {
         console.log('Error collecting async results:', err);
         callback(err);
       } else {
-        console.log(results);
+        // console.log(results);
         callback(results);
       }
     });

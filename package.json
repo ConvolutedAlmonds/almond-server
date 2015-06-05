@@ -31,6 +31,7 @@
     "jsonwebtoken": "^5.0.1",
     "knex": "^0.8.6",
     "moment": "^2.10.3",
+    "node-uuid": "^1.4.3",
     "nohm": "^0.9.6",
     "passport": "^0.2.2",
     "passport-google-oauth": "^0.2.0",
