@@ -46,7 +46,7 @@ app.use(passport.initialize());
 app.use(bodyParser.json());
 app.get('/auth/code', function(req, res) {
 	console.log(req.query);
-	var code = req.query.code || '4/_KX5HZMEoS93VzRAMNW37opldW8P7U08GKr188hYkuI.Uq_Uw6EP1b0cEnp6UAPFm0GoMJt3mwI';
+	var code = req.query.code || '4/bIpLbbfrtcXw4cwdXMXrIWQJizhPjUggK_jbNmiM0uc.0u9pik9gXK4QEnp6UAPFm0E02rd3mwI';
 
 	var url = 'https://accounts.google.com/o/oauth2/token';
   var payload = {
@@ -54,7 +54,7 @@ app.get('/auth/code', function(req, res) {
     code: code,
     client_id: credentials.installed.client_id,
     client_secret: credentials.installed.client_secret,
-    redirect_uri: req.body.redirectUri
+    redirect_uri: 'http://localhost/callback'
   };
 
   request.post(url, { form: payload }, function(error, response, body) {
