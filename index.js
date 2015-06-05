@@ -1,4 +1,3 @@
-console.log("#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{#{}}}}}}}}}}}}}}}}}}}}}")
 var express = require('express');
 var app = express();
 var apiRouter = express.Router();
