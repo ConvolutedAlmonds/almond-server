@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node index.js& ./node_modules/.bin/mocha test/server-spec.js; pkill -n node;",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -17,22 +18,30 @@
   },
   "homepage": "https://github.com/arosenberg01/almond-server",
   "dependencies": {
+    "async": "^1.2.0",
     "bluebird": "^2.9.26",
     "body-parser": "^1.12.4",
+    "bookshelf": "^0.8.1",
     "express": "^4.12.4",
     "express-session": "^1.11.2",
+    "geocoder": "^0.2.2",
     "google-auth-library": "^0.9.6",
     "googleapis": "^2.0.4",
+    "jsdoc": "^3.3.0",
     "jsonwebtoken": "^5.0.1",
+    "knex": "^0.8.6",
     "moment": "^2.10.3",
+    "node-uuid": "^1.4.3",
     "nohm": "^0.9.6",
     "passport": "^0.2.2",
     "passport-google-oauth": "^0.2.0",
+    "pg": "^4.3.0",
     "redis": "^0.12.1",
     "request": "^2.55.0"
   },
   "devDependencies": {
     "chai": "^2.3.0",
+    "mocha": "^2.2.5",
     "supertest": "^1.0.1"
   }
 }
