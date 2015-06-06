@@ -1,4 +1,4 @@
-module.exports = function(passport, app, jwt, nohm, credentials, UserModel) {
+module.exports = function(passport, app, jwt, nohm, credentials, User) {
   var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
   var google = require('googleapis');
   var googleAuth = require('google-auth-library');
@@ -16,6 +16,16 @@ module.exports = function(passport, app, jwt, nohm, credentials, UserModel) {
         var jwtToken = jwt.sign(profile.id, app.get('superSecret'), {
           expiresInMinutes: 1440 // expires in 24 hours
         });
+
+        // var user = new User({
+        //   googleId: 'testid',
+        //   googleToken: 'testtoken',
+        //   googleTokenSecret: 'testSecret',
+        //   googleTokenExp: 'testExp'
+        // })
+        //   .save().then(function(user) {
+        //     console.log('\n ----- USER SAVED ----- \n');
+        //   })
 
         // UserModel.methods.saveUser(profile.id, token, tokenSecret, function(userWasSaved) {
         //   userWasSaved ? console.log('User saved') : console.log('Error saving user...');
