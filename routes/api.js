@@ -1,3 +1,5 @@
+var async = require('async');
+
 module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, uber, calendar, googleAuth, credentials) {
 
   /**
@@ -16,38 +18,41 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
   });
 
   /**
-   * Returns all Google Directions API routes via JSON to the client.
+   * Returns all Google Directions API routes and Uber time and prices estimates to the client via JSON.
    * Request needs at least origin and destination parameters, which much be addresses or long/lat coordinates.
    * Request body can also include a departure or arrival time (only applied to 'transit' route modes) - in # seconds
    * since epoch time
    */
   router.post('/routes', function(req, res) {
-    var origin = req.body.origin;
-    var destination = req.body.destination;
-    var arrivalTime = req.body.arrivalTime;
-    var departureTime = req.body.departureTime;
+      var origin = req.body.origin;
+      var destination = req.body.destination;
+      var arrivalTime = req.body.arrivalTime;
+      var departureTime = req.body.departureTime;
 
-    userMap.getAllRoutes(origin, destination, arrivalTime, departureTime, function(data) {
-      // console.log('Routes:', routes);
-      res.status(200);
-      res.json({data: data})
+
+      async.parallel({
+        directions: function(cb) {
+          userMap.getAllRoutes(origin, destination, arrivalTime, departureTime, function(data) {
+            // console.log('Routes:', routes);
+            cb(null, data);
+          });
+        },
+
+        uber: function(cb) {
+          uber.getEstimates(origin, destination, credentials, function(estimates) {
+            // console.log('Estimates:', estimates);
+            cb(null, estimates);
+          });
+        }
+      },
+
+      function(err, results) {
+        if (err) console.log('Error in routes', err)
+        var data = results;
+        res.status(200);
+        res.json({data: data});
+      });
     });
-  });
 
-  /**
-   * Returns price and time estimates from Uber API via JSON to the client.
-   * Request needs origin and destination params, each an object with .longitude and .latitude properties
-   */
-  router.post('/uberEstimates', function(req, res) {
-    var origin = req.body.origin;
-    var destination = req.body.destination;
-
-    uber.getEstimates(origin, destination, credentials, function(estimates) {
-      // console.log('Estimates:', estimates);
-      res.status(200);
-      res.json({estimates: estimates});
-
-    })
-  })
 
 };
