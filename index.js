@@ -14,6 +14,7 @@ var userCalendar = require('./external-apis/calendar.js');
 var userMap = require('./external-apis/map.js');
 var uber = require('./external-apis/uber.js');
 var User = require('./db/models/user.js');
+var request = require('request');
 
 app.use(bodyParser.json());
 
