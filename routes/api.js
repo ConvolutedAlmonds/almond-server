@@ -52,8 +52,11 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
         res.status(200);
         results.misc = {};
         results.misc.origin = origin;
-        results.misc.destination = destination;
-        results.misc.destAddress = req.body.destAddress;
+        results.misc.destination = {
+          longitude: destination.longitude,
+          latitude: destination.latitude,
+          address: req.body.destAddress
+        };
         res.json(results);
       });
     });
