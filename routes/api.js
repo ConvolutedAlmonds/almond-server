@@ -50,7 +50,7 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
         if (err) console.log('Error in routes', err)
         var data = results;
         res.status(200);
-        res.json({data: data});
+        res.json(data);
       });
     });
 
