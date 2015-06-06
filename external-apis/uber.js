@@ -49,7 +49,7 @@ module.exports = {
         request(requestUrls.urls.priceEstimate).spread(function(response, body) {
           var data = JSON.parse(body);
           data.prices.forEach(function(price) {
-            price.parsedEstimate = parseSeconds(price.duration);
+            price.parsedArrivalTime = parseSeconds(price.duration);
           })
           // console.log(data);
           cb(null, data);
@@ -61,7 +61,7 @@ module.exports = {
         request(requestUrls.urls.timeEstimate).spread(function(response, body) {
           var data = JSON.parse(body);
           data.times.forEach(function(time) {
-            time.parsedEstimate = parseSeconds(time.estimate);
+            time.parsedDuration = parseSeconds(time.estimate);
           })
           // console.log(data);
           cb(null, data);
@@ -70,14 +70,39 @@ module.exports = {
         });
       }
     },
-    // Callback on returned reuslts
+    // Format results and return with callback
     function(err, results) {
       if (err) {
-        // console.log('Error collecting async results:', err);
         callback(err);
       } else {
-        // console.log(results);
-        callback(results);
+        var combinedResults = {};
+        results.priceEstimate.prices.forEach(function(estimate) {
+          var uberType = estimate.localized_display_name;
+          if (!combinedResults[uberType]) {
+            combinedResults[uberType] = {};
+          }
+          for (var property in estimate) {
+            var newKey = 'price_' + property;
+            combinedResults[uberType][newKey] = estimate[property];
+          }
+        });
+
+        results.timeEstimate.times.forEach(function(estimate) {
+          var uberType = estimate.localized_display_name;
+          if (!combinedResults[uberType]) {
+            combinedResults[uberType] = {};
+          }
+          for (var property in estimate) {
+            var newKey = 'time_' + property;
+            combinedResults[uberType][newKey] = estimate[property];
+          }
+        });
+        var data = [];
+        for (var uberCar in combinedResults) {
+          data.push(combinedResults[uberCar])
+        }
+
+        callback(data);
       }
     });
 

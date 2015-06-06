@@ -9,7 +9,8 @@ module.exports = function(numSeconds) {
   var hours = Math.floor(duration.asHours());
   var mins = Math.floor(duration.asMinutes()) - hours * 60;
 
-  if (hours) result += hours + 'h '
+  if (hours) result += hours + 'h ';
+  if (mins === 0) mins++;
 
   result += mins + 'm'
 
