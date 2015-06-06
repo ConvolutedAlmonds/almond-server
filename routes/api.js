@@ -48,9 +48,13 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
 
       function(err, results) {
         if (err) console.log('Error in routes', err)
-        var data = results;
+        // var data = results;
         res.status(200);
-        res.json(data);
+        results.misc = {};
+        results.misc.origin = origin;
+        results.misc.destination = destination;
+        results.misc.destAddress = req.body.destAddress;
+        res.json(results);
       });
     });
 

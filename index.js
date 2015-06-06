@@ -34,9 +34,9 @@ app.use(function(req, res, next) {
     geocoder.geocode(req.body.destAddress, function(err, data) {
       var coordinates = data.results[0].geometry;
       req.body.destination = {};
-      req.body.destination.longitude = coordinates.location.lng;
-      req.body.destination.latitude = coordinates.location.lat
-      next()
+      req.body.destination.longitude = coordinates.location.lng.toString();
+      req.body.destination.latitude = coordinates.location.lat.toString();
+      next();
     });
   } else {
     next()
