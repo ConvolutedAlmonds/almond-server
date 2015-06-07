@@ -48,34 +48,10 @@ describe('Server test -- ', function() {
       });
     });
 
-
-    describe('Authenticated api request to /api/uberEstimates', function(){
-      it('should return a status code of 200', function(done){
-        var options = {
-          url: 'http://localhost:3000/api/routes',
-          method: 'POST',
-          'Content-Type': 'X-www-form-urlencoded',
-          form: {
-            'origin': {
-              'longitude': 5,
-              'latitude': 5
-            },
-            'destAddress': '944 Market Street San Francisco, CA'
-          },
-        };
-
-        request(options, function(error, res, body) {
-          expect(res.statusCode).to.equal(200);
-          done();
-        });
-      });
-    });
-  });
-
-  describe('Improper api request to /api/uberEstimates', function(){
+  xdescribe('Improper api request to /api/upcomingEvents', function(){
     it('should return a status code of 500', function(done){
 
-      request.post('http://localhost:3000/api/uberEstimates', function(error, res, body) {
+      request.post('http://localhost:3000/api/upcomingEvents', function(error, res, body) {
         expect(res.statusCode).to.equal(500);
         done();
       });

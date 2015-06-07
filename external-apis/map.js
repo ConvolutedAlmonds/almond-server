@@ -54,15 +54,11 @@ var secondsToReadable = function(numSeconds) {
   var hours = Math.floor(duration.asHours());
   var mins = Math.floor(duration.asMinutes()) - hours * 60;
 
-  if (hours) {
-    if (hours > 1) {
-      result += hours + ' hours ';
-    } else {
-      result += hours + ' hour '
-    }
-  }
+  if (hours) result += hours + 'h '
 
-  mins > 1 ? result += mins + ' mins ' : result += mins + ' hour '
+  result += mins + 'm'
+
+  // mins > 1 ? result += mins + ' mins ' : result += mins + ' hour '
 
   return result;
 };
