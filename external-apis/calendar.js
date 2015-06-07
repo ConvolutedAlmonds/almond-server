@@ -6,8 +6,8 @@ var authorize = function(credentials, googleAuth, user, callback) {
   var auth = new googleAuth();
   var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
-  var dummyToken = 'ya29.igEeqN4EBstMBTpOTf8wMqdVChC5r16SC15Nhf__tMb-swQhh87PSnYsCHqqRxc4auAahyTvRyWGXg';
-  var dummySecret = '1/MU3HvAMTQQQ3SNVi87jNEhi6Ro_iD6B4WNEgRlNLcEE';
+  var dummyToken = 'ya29.iwHXxV_nh4isgYJSbfNxpFVWq1Y4_XUwbmoWc6rrJuqHWoEpbtwi75EjApA3d1WTDap2oMuJi1AcYQ';
+  var dummySecret = '1/creLxqYlsJwFKlebEUxDj9laR68lcN89Q1CIMBRaHupIgOrJDtdun6zK6XiATCKT';
 
   oauth2Client.credentials = {
     // access_token: user.googleToken,
