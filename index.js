@@ -87,7 +87,7 @@ var authUrl = 'https://accounts.google.com/o/oauth2/auth?client_id=' + credentia
 // })
 
 app.get('/auth/code', function(req, res) {
-  // console.log('code', req.query.code);
+  console.log('code', req.query.code);
   // console.log('client_id', credentials.installed.client_id);
   // console.log('client_secret', credentials.installed.client_secret);
 
@@ -106,10 +106,18 @@ app.get('/auth/code', function(req, res) {
     if (error) console.log('error using auth code:', error)
     console.log(body);
 
-    request('https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=' + body.access_token, function(error, response, body) {
-      if (error) console.log('error retrieving user info:', error);
-      console.log('user info:', body);
-    })
+    // request('https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=' + body.access_token, function(error, response, body) {
+    //   if (error) console.log('error retrieving user info:', error);
+    //   console.log('user info:', body);
+    // })
+    var token = body.id_token;
+    var parts = token.split('.');
+    var headerBuf = new Buffer(parts[0], 'base64');
+    var bodyBuf = new Buffer(parts[1], 'base64');
+    var header = JSON.parse(headerBuf.toString());
+    var body = JSON.parse(bodyBuf.toString());
+    console.log('header:', header);
+    console.log('body', body);
 
   });
 });
