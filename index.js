@@ -13,8 +13,9 @@ var userCalendar = require('./external-apis/calendar.js');
 var userMap = require('./external-apis/map.js');
 var uber = require('./external-apis/uber.js');
 
-app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 /**
  * Cors headers
  */

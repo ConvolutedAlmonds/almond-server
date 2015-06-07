@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js& ./node_modules/.bin/mocha test/server-spec.js; pkill -n node;",
+    "test": "./node_modules/.bin/mocha test/server-spec.js;",
     "start": "node index.js"
   },
   "repository": {
