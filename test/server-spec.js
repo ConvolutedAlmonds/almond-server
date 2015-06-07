@@ -16,6 +16,16 @@ describe('Server test -- ', function() {
 
   describe('Route authentication:', function(){
 
+    describe('Improper api request to /api/routes', function(){
+      it('should return a status code of 500', function(done){
+
+        request.post('http://localhost:3000/api/routes', function(error, res, body) {
+          expect(res.statusCode).to.equal(500);
+          done();
+        });
+      });
+    });
+
     describe('authenticated api request to /api/routes', function(){
       it('should return a status code of 200', function(done){
         var options = {
@@ -60,7 +70,16 @@ describe('Server test -- ', function() {
         });
       });
     });
+  });
 
+  describe('Improper api request to /api/uberEstimates', function(){
+    it('should return a status code of 500', function(done){
+
+      request.post('http://localhost:3000/api/uberEstimates', function(error, res, body) {
+        expect(res.statusCode).to.equal(500);
+        done();
+      });
+    });
   });
 
 
