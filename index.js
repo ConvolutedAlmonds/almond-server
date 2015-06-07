@@ -106,7 +106,7 @@ app.get('/auth/code', function(req, res) {
     if (error) console.log('error using auth code:', error)
     console.log(body);
 
-    request('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + body.access_token, function(error, response, body) {
+    request('https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=' + body.access_token, function(error, response, body) {
       if (error) console.log('error retrieving user info:', error);
       console.log('user info:', body);
     })
