@@ -110,7 +110,9 @@ app.get('/auth/code', function(req, res) {
     //   if (error) console.log('error retrieving user info:', error);
     //   console.log('user info:', body);
     // })
+    body = JSON.parse(body);
     var token = body.id_token;
+    console.log('token:', token); 
     var parts = token.split('.');
     var headerBuf = new Buffer(parts[0], 'base64');
     var bodyBuf = new Buffer(parts[1], 'base64');
