@@ -9,12 +9,12 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
 
     var googleId = req.decoded;
 
-    UserModel.methods.getUser(googleId, function(user) {
-      userCalendar.getEvents(calendar, googleAuth, credentials, user, function(events) {
+    // UserModel.methods.getUser(googleId, function(user) {
+      userCalendar.getEvents(calendar, googleAuth, credentials, {}, function(events) {
         res.status(200);
         res.json({events: events});
       });
-    });
+    // });
   });
 
   /**

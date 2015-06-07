@@ -6,10 +6,16 @@ var authorize = function(credentials, googleAuth, user, callback) {
   var auth = new googleAuth();
   var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
+  var dummyToken = 'ya29.igEeqN4EBstMBTpOTf8wMqdVChC5r16SC15Nhf__tMb-swQhh87PSnYsCHqqRxc4auAahyTvRyWGXg';
+  var dummySecret = '1/MU3HvAMTQQQ3SNVi87jNEhi6Ro_iD6B4WNEgRlNLcEE';
+
   oauth2Client.credentials = {
-    access_token: user.googleToken,
+    // access_token: user.googleToken,
+    access_token: dummyToken,
     token_type:'Bearer',
-    refresh_token: user.googleTokenSecret
+    // refresh_token: user.googleTokenSecret,
+    refresh_token: dummySecret
+    
     // expiry_date: user.profile.exp
   };
 
@@ -29,7 +35,7 @@ module.exports = {
         if (err) {
           console.log('ERROR:', err)
         } else {
-          // console.log(response);
+          console.log(response);
           callback(response);
         }
       });

@@ -1,7 +1,7 @@
 module.exports = {
   "installed": {
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "client_secret": "xsdwa1AZMgvpTkFzKt-tULzJ",
+    "client_secret": "h93fMag-N6n-5Y6f-onwbw1X",
     "token_uri": "https://accounts.google.com/o/oauth2/token",
     "client_email": "",
     "redirect_uris": [

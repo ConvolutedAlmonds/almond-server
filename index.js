@@ -69,11 +69,28 @@ app.use(function(req, res, next) {
 });
 
 app.get('/temp', function(req, res) {
-  res.send('<!DOCTYPE html><body><a href="/auth/google">Authorize</a></body></html>')
+  res.send('<!DOCTYPE html><body><a href="/auth/dummy">Authorize</a></body></html>')
 })
 
+var scope = 'https://www.googleapis.com/auth/plus.login';
+
+var authUrl = 'https://accounts.google.com/o/oauth2/auth?client_id=' + credentials.installed.client_id + '&redirect_uri=http://localhost/callback&scope=https://www.googleapis.com/auth/plus.login&approval_prompt=force&response_type=code&access_type=offline'
+
+// app.get('/auth/dummy', function(req, res) {
+  
+//   request(authUrl, function(error, response, body) {
+//     console.log('request auth code');
+//     if (error) console.log(error);
+//     res.send(body);
+//     // console.log('Body', body);
+//   })
+// })
+
 app.get('/auth/code', function(req, res) {
-  console.log(req.query);
+  console.log('code', req.query.code);
+  console.log('client_id', credentials.installed.client_id);
+  console.log('client_secret', credentials.installed.client_secret);
+
   var code = req.query.code || '4/bIpLbbfrtcXw4cwdXMXrIWQJizhPjUggK_jbNmiM0uc.0u9pik9gXK4QEnp6UAPFm0E02rd3mwI';
 
   var url = 'https://accounts.google.com/o/oauth2/token';
@@ -86,6 +103,7 @@ app.get('/auth/code', function(req, res) {
   };
 
   request.post(url, { form: payload }, function(error, response, body) {
+    if (error) console.log('error using auth code:', error)
     console.log(body);
   });
 });
