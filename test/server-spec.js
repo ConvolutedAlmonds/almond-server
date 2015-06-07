@@ -48,12 +48,13 @@ describe('Server test -- ', function() {
       });
     });
 
-  xdescribe('Improper api request to /api/upcomingEvents', function(){
-    it('should return a status code of 500', function(done){
+    xdescribe('Improper api request to /api/upcomingEvents', function(){
+      it('should return a status code of 500', function(done){
 
-      request.post('http://localhost:3000/api/upcomingEvents', function(error, res, body) {
-        expect(res.statusCode).to.equal(500);
-        done();
+        request.post('http://localhost:3000/api/upcomingEvents', function(error, res, body) {
+          expect(res.statusCode).to.equal(500);
+          done();
+        });
       });
     });
   });
