@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var apiRouter = express.Router();
+var calRouter = express.Router();
 var bodyParser = require('body-parser')
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
@@ -17,14 +18,17 @@ var User = require('./db/models/user.js');
 var request = require('request');
 
 app.use(bodyParser.json());
+app.set('superSecret', 'anything');
 
 /**
  * Cors headers
  */
 app.use(function(req, res, next) {
+
+
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', "*");
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  // res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-Access-Token, X-HTTP-Method-Override, Content-Type, Accept, Authorization');
   next();
 });
 
@@ -32,6 +36,10 @@ app.use(function(req, res, next) {
  * Middleware to convert destination address on req.body.destination to longitude and latitude coordinates
  */
 app.use(function(req, res, next) {
+
+  console.log('HEADERS', req.headers);
+  console.log('x-access-token', req.headers['x-access-token']);
+
   if (req.body.destAddress) {
 
     async.parallel({
@@ -77,7 +85,7 @@ var scope = 'https://www.googleapis.com/auth/plus.login';
 var authUrl = 'https://accounts.google.com/o/oauth2/auth?client_id=' + credentials.installed.client_id + '&redirect_uri=http://localhost/callback&scope=https://www.googleapis.com/auth/plus.login&approval_prompt=force&response_type=code&access_type=offline'
 
 // app.get('/auth/dummy', function(req, res) {
-  
+
 //   request(authUrl, function(error, response, body) {
 //     console.log('request auth code');
 //     if (error) console.log(error);
@@ -85,6 +93,18 @@ var authUrl = 'https://accounts.google.com/o/oauth2/auth?client_id=' + credentia
 //     // console.log('Body', body);
 //   })
 // })
+
+var parseGoogleJwt = function(googleJwt) {
+  var parts = googleJwt.split('.');
+  var headerBuf = new Buffer(parts[0], 'base64');
+  var bodyBuf = new Buffer(parts[1], 'base64');
+  var header = JSON.parse(headerBuf.toString());
+  var body = JSON.parse(bodyBuf.toString());
+  // console.log('header:', header);
+  // console.log('body', body);
+
+  return body.sub;
+}
 
 app.get('/auth/code', function(req, res) {
   console.log('code', req.query.code);
@@ -106,20 +126,40 @@ app.get('/auth/code', function(req, res) {
     if (error) console.log('error using auth code:', error)
     console.log('body:', body);
 
-    // request('https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=' + body.access_token, function(error, response, body) {
-    //   if (error) console.log('error retrieving user info:', error);
-    //   console.log('user info:', body);
-    // })
     body = JSON.parse(body);
-    var token = body.id_token;
-    console.log('token:', token); 
-    var parts = token.split('.');
-    var headerBuf = new Buffer(parts[0], 'base64');
-    var bodyBuf = new Buffer(parts[1], 'base64');
-    var header = JSON.parse(headerBuf.toString());
-    var body = JSON.parse(bodyBuf.toString());
-    console.log('header:', header);
-    console.log('body', body);
+
+    var userId = parseGoogleJwt(body.id_token);
+
+    var jwtToken = jwt.sign(userId, app.get('superSecret'), {
+      expiresInMinutes: 1440 // expires in 24 hours
+    });
+
+    console.log('responding with jwt?');
+
+    res.status(200);
+    res.json({jwt: jwtToken});
+
+
+    // new User({
+    //   googleId: userId
+    // }).fetch().then(function(user) {
+    //   if (!user) {
+    //     console.log('new user!'); 
+    //     new User({
+    //       googleId: userId,
+    //       accessToken: ,
+    //       refreshToken: ,
+    //       tokenValidityLength: 
+    //     }).save().then(function(user) {
+    //       console.log('User saved!', user)
+    //     })
+    //   } else {
+    //     console.log('user already exists');
+
+    //   }
+
+      // SIGN JWT WITH USER ID
+    // })
 
   });
 });
@@ -128,14 +168,22 @@ app.get('/auth/code', function(req, res) {
 
 // require('./auth-strategies/google-strategy.js')(passport, app, jwt, null, credentials, UserModel);
 app.use('/api', apiRouter);
-// app.set('superSecret', 'anything');
+app.use('/cal', calRouter);
 
-var main = require('./routes/main.js')(app);
-// var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
 var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
+
+
+var authenticate = require('./routes/authentication')(app, calRouter, jwt);
+var main = require('./routes/main.js')(app, calRouter);
+
+
 
 var port = process.env.PORT || 3000;
 
 app.listen(port, function() {
   console.log('Listening on port', port)
 });
+
+
+
+
