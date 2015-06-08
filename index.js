@@ -25,7 +25,6 @@ app.set('superSecret', 'anything');
  */
 app.use(function(req, res, next) {
 
-
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', "*");
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-Access-Token, X-HTTP-Method-Override, Content-Type, Accept, Authorization');
@@ -36,8 +35,6 @@ app.use(function(req, res, next) {
  * Middleware to convert destination address on req.body.destination to longitude and latitude coordinates
  */
 app.use(function(req, res, next) {
-
-  console.log('x-access-token', req.headers['x-access-token']);
 
   if (req.body.destAddress) {
 
@@ -79,20 +76,6 @@ app.get('/temp', function(req, res) {
   res.send('<!DOCTYPE html><body><a href="/auth/dummy">Authorize</a></body></html>')
 })
 
-var scope = 'https://www.googleapis.com/auth/plus.login';
-
-var authUrl = 'https://accounts.google.com/o/oauth2/auth?client_id=' + credentials.installed.client_id + '&redirect_uri=http://localhost/callback&scope=https://www.googleapis.com/auth/plus.login&approval_prompt=force&response_type=code&access_type=offline'
-
-// app.get('/auth/dummy', function(req, res) {
-
-//   request(authUrl, function(error, response, body) {
-//     console.log('request auth code');
-//     if (error) console.log(error);
-//     res.send(body);
-//     // console.log('Body', body);
-//   })
-// })
-
 var parseGoogleJwt = function(googleJwt) {
   var parts = googleJwt.split('.');
   var headerBuf = new Buffer(parts[0], 'base64');
@@ -133,10 +116,7 @@ app.get('/auth/code', function(req, res) {
       expiresInMinutes: 1440 // expires in 24 hours
     });
 
-    console.log('responding with jwt?');
-
-    
-
+    console.log('responding with jwt');
 
     new User({
       googleId: userId
@@ -146,9 +126,9 @@ app.get('/auth/code', function(req, res) {
 
         new User({
           googleId: userId,
-          accessToken: 'test',
-          refreshToken: 'test',
-          secondsValid: 1000
+          accessToken: body.access_token,
+          refreshToken: body.refresh_token,
+          secondsValid: body.expires_in,
         }).save().then(function(user) {
           console.log('New user saved!', user)
         });
@@ -156,16 +136,13 @@ app.get('/auth/code', function(req, res) {
       } else {
         console.log('user already exists')
         user.save({
-          googleId: userId,
-          accessToken: 'test',
-          refreshToken: 'test',
-          secondsValid: 1000
+          accessToken: body.access_token,
+          refreshToken: body.refresh_token,
+          secondsValid: body.expires_in,
         }).then(function(user) {
           console.log('User updated')
         })
       }
-
-      // SIGN JWT WITH USER ID
     })
 
     res.status(200);
@@ -184,7 +161,7 @@ var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, u
 
 
 var authenticate = require('./routes/authentication')(app, calRouter, jwt);
-var main = require('./routes/main.js')(app, calRouter);
+var main = require('./routes/main.js')(app, calRouter, User, userCalendar, calendar, googleAuth, credentials);
 
 
 
