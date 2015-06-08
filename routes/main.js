@@ -1,6 +1,6 @@
-module.exports = function(app) {
+module.exports = function(app, router) {
 
-  app.get('/', function(req, res) {
+  router.get('/', function(req, res) {
     res.send('Would you like some almonds?')
   });
 

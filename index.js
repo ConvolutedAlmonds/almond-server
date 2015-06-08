@@ -37,7 +37,6 @@ app.use(function(req, res, next) {
  */
 app.use(function(req, res, next) {
 
-  console.log('HEADERS', req.headers);
   console.log('x-access-token', req.headers['x-access-token']);
 
   if (req.body.destAddress) {
@@ -136,30 +135,41 @@ app.get('/auth/code', function(req, res) {
 
     console.log('responding with jwt?');
 
-    res.status(200);
-    res.json({jwt: jwtToken});
+    
 
 
-    // new User({
-    //   googleId: userId
-    // }).fetch().then(function(user) {
-    //   if (!user) {
-    //     console.log('new user!'); 
-    //     new User({
-    //       googleId: userId,
-    //       accessToken: ,
-    //       refreshToken: ,
-    //       tokenValidityLength: 
-    //     }).save().then(function(user) {
-    //       console.log('User saved!', user)
-    //     })
-    //   } else {
-    //     console.log('user already exists');
+    new User({
+      googleId: userId
+    }).fetch().then(function(user) {
+      if (!user) {
+        console.log('new user');
 
-    //   }
+        new User({
+          googleId: userId,
+          accessToken: 'test',
+          refreshToken: 'test',
+          secondsValid: 1000
+        }).save().then(function(user) {
+          console.log('New user saved!', user)
+        });
+
+      } else {
+        console.log('user already exists')
+        user.save({
+          googleId: userId,
+          accessToken: 'test',
+          refreshToken: 'test',
+          secondsValid: 1000
+        }).then(function(user) {
+          console.log('User updated')
+        })
+      }
 
       // SIGN JWT WITH USER ID
-    // })
+    })
+
+    res.status(200);
+    res.json({jwt: jwtToken});
 
   });
 });
