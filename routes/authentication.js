@@ -2,14 +2,14 @@ module.exports = function(app, router, jwt) {
 
 
   router.use(function(req, res, next) {
-    console.log('\n checking for token \n')
+
     // check header or url parameters or post parameters for token
       var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
       // decode token
       if (token) {
 
-        console.log('token found')
+        console.log('token found:', req.headers['x-access-token'])
 
         // verifies secret and checks exp
         jwt.verify(token, app.get('superSecret'), function(err, decoded) {
@@ -33,6 +33,5 @@ module.exports = function(app, router, jwt) {
 
       }
   });
-
 
 };
