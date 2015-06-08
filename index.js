@@ -12,10 +12,10 @@ var credentials = require('./config.js');
 var userCalendar = require('./external-apis/calendar.js');
 var userMap = require('./external-apis/map.js');
 var uber = require('./external-apis/uber.js');
-var User = require('./db/models/user.js');
 
-app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 /**
  * Cors headers
  */
@@ -73,7 +73,7 @@ app.use('/api', apiRouter);
 
 var main = require('./routes/main.js')(app);
 // var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
-var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
+var api = require('./routes/api.js')(app, apiRouter, null, {}, userCalendar, userMap, uber, calendar, googleAuth, credentials);
 
 var port = process.env.PORT || 3000;
 
