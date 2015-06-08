@@ -18,6 +18,9 @@ var User = require('./db/models/user.js');
 var request = require('request');
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.set('superSecret', 'anything');
 
 /**
@@ -157,7 +160,13 @@ app.get('/auth/code', function(req, res) {
 app.use('/api', apiRouter);
 app.use('/cal', calRouter);
 
+<<<<<<< HEAD
 var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
+=======
+var main = require('./routes/main.js')(app);
+// var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
+var api = require('./routes/api.js')(app, apiRouter, null, {}, userCalendar, userMap, uber, calendar, googleAuth, credentials);
+>>>>>>> 9840c27ec197ebfda84440d89e8d6c0a6a87da89
 
 
 var authenticate = require('./routes/authentication')(app, calRouter, jwt);
