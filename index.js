@@ -23,6 +23,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.set('superSecret', 'anything');
 
+var port = process.env.PORT || 3000;
+
 /**
  * Cors headers
  */
@@ -160,21 +162,9 @@ app.get('/auth/code', function(req, res) {
 app.use('/api', apiRouter);
 app.use('/cal', calRouter);
 
-<<<<<<< HEAD
 var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
-=======
-var main = require('./routes/main.js')(app);
-// var authenticate = require('./routes/authentication')(app, apiRouter, jwt, passport);
-var api = require('./routes/api.js')(app, apiRouter, null, {}, userCalendar, userMap, uber, calendar, googleAuth, credentials);
->>>>>>> 9840c27ec197ebfda84440d89e8d6c0a6a87da89
-
-
 var authenticate = require('./routes/authentication')(app, calRouter, jwt);
 var main = require('./routes/main.js')(app, calRouter, User, userCalendar, calendar, googleAuth, credentials);
-
-
-
-var port = process.env.PORT || 3000;
 
 app.listen(port, function() {
   console.log('Listening on port', port)
