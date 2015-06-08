@@ -5,7 +5,6 @@ var User = db.Model.extend({
   tableName: 'users',
   hasTimestamps: true,
   initialize: function() {
-    var randomId = uuid.v4();
   }
 });
 

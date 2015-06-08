@@ -22,11 +22,10 @@ db.knex.schema.hasTable('users').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('users', function (user) {
       user.increments('id').primary();
-      user.string('uuid', 255).unique()
       user.string('googleId', 255).unique();
-      user.string('googleToken', 255);
-      user.string('googleTokenSecret', 255);
-      user.string('googleTokenExp', 255);
+      user.string('accessToken', 255);
+      user.string('refreshToken', 255);
+      user.integer('secondsValid');
       user.timestamps();
     }).then(function (table) {
       console.log('Created Table', table);
