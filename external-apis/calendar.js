@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 var authorize = function(credentials, googleAuth, user, callback) {
 
   var clientSecret = credentials.installed.client_secret;
@@ -12,51 +14,107 @@ var authorize = function(credentials, googleAuth, user, callback) {
   oauth2Client.credentials = {
     access_token: user.attributes.accessToken,
     token_type:'Bearer',
-    refresh_token: user.attributes.refreshToken,    
-    // expiry_date: user.profile.exp
+    refresh_token: user.attributes.refreshToken,
   };
 
   callback(oauth2Client);
 };
 
+// Get user's calendar IDs
+var getCalendarIds = function(calendar, googleAuth, credentials, user, callback) {
+  var calendarIds = [];
+  var calendarTasks = [];
+
+  authorize(credentials, googleAuth, user, function(auth) {
+    calendar.calendarList.list({
+      auth: auth
+    }, function(err, response) {
+
+      if (err) {
+        console.log('ERROR:', err)
+      } else {
+        console.log('calendars found');
+        response.items.forEach(function(calendar) {
+          if (calendar.id !== 'en.usa#holiday@group.v.calendar.google.com' && calendar.id !== '#contacts@group.v.calendar.google.com') {
+            calendarIds.push(calendar.id)
+          }
+        });
+
+        console.log(calendarIds);
+        callback(calendarIds);
+      }
+
+    });
+  });
+};
+
+// retrieve first ten events from each calendar
+var makeCalendarRequests = function(calendar, calendarIds, credentials, googleAuth, user, callback) {
+  var calendarEvents = [];
+
+  var inner = function() {
+    if (calendarIds.length) {
+
+      var calendarId = calendarIds.shift();
+
+      authorize(credentials, googleAuth, user, function(auth) {
+        calendar.events.list({
+          auth: auth,
+          calendarId: calendarId,
+          timeMin: (new Date()).toISOString(),
+          timeMax: (moment().endOf('day')).toISOString(),
+          maxResults: 10,
+          singleEvents: true,
+          orderBy: 'startTime'
+        }, function(err, response) {
+          if (err) {
+            console.log('There was an error contacting the Calendar service: ' + err);
+            inner()
+          } else {
+            // console.log(response);
+            calendarEvents.push(response);
+            inner();
+          }
+        });
+      });
+
+    } else {
+      callback(calendarEvents);
+    }
+  }
+
+  inner()
+};
 
 module.exports = {
 
-  getCalendars: function(calendar, googleAuth, credentials, user, callback) {
+  getAllEvents: function(calendar, googleAuth, credentials, user, callback) {
+    var events = [];
 
-    authorize(credentials, googleAuth, user, function(auth) {
-      calendar.calendarList.list({
-        auth: auth
-      }, function(err, response) {
-        if (err) {
-          console.log('ERROR:', err)
-        } else {
-          console.log(response);
-          callback(response);
-        }
-      });
-    })
-  },
+    getCalendarIds(calendar, googleAuth, credentials, user, function(calendarIds) {
 
-  getEvents: function(calendar, googleAuth, credentials, user, callback) {
+      makeCalendarRequests(calendar, calendarIds, credentials, googleAuth, user, function(calendarRequests) {
 
-    authorize(credentials, googleAuth, user, function(auth) {
-      calendar.events.list({
-        auth: auth,
-        calendarId: 'primary',
-        timeMin: (new Date()).toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime'
-      }, function(err, response) {
-        if (err) {
-          console.log('There was an error contacting the Calendar service: ' + err);
-          return;
-        } else {
-          callback(response);
-        }
+        calendarRequests.forEach(function(calendar) {
+          calendar.items.forEach(function(item) {
+            if (item.start.dateTime ) {
+              events.push(item);
+              item.start.formattedDate = moment(item.start.dateTime).format('MMMM Do YYYY');
+              item.start.formattedTime = moment(item.start.dateTime).format('h:mm a');
+            }
+          });
+        });
+
+        events.sort(function(a, b) {
+          bDate = moment(b.start.dateTime || b.start.date);
+          aDate = moment(a.start.dateTime || a.start.date);
+
+          return moment(bDate).isBefore(aDate);
+        });
+
+        callback(events);
+
       });
     });
   }
-
 };
