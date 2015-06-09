@@ -101,6 +101,7 @@ module.exports = {
               events.push(item);
               item.start.formattedDate = moment(item.start.dateTime).format('MMMM Do YYYY');
               item.start.formattedTime = moment(item.start.dateTime).format('h:mm a');
+              item.end.formattedTime = moment(item.end.dateTime).format('h:mm a');
             }
           });
         });

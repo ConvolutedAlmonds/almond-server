@@ -25,6 +25,7 @@ db.knex.schema.hasTable('users').then(function(exists) {
       user.string('googleId', 255).unique();
       user.string('accessToken', 255);
       user.string('refreshToken', 255);
+      user.string('tokenExpDate')
       user.integer('secondsValid');
       user.timestamps();
     }).then(function (table) {
