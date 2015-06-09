@@ -16,6 +16,8 @@ var userMap = require('./external-apis/map.js');
 var uber = require('./external-apis/uber.js');
 var User = require('./db/models/user.js');
 var request = require('request');
+var moment = require('moment');
+var getNewAccessToken = require('./utils/refresh.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -56,11 +58,8 @@ app.use(function(req, res, next) {
       reverseGeocode: function(cb) {
         var latitude = req.body.origin.latitude;
         var longitude = req.body.origin.longitude;
-        // console.log(latitude, longitude);
         geocoder.reverseGeocode(Number(latitude), Number(longitude), function(err, data) {
           if (err) console.log('error reverse geocoding', err);
-          // var address = data.results[0].formatted_address;
-          // console.log('reverse geocode...', data);
           req.body.origin.address = data.results[0].formatted_address;
           cb(null, true);
         })
@@ -87,16 +86,12 @@ var parseGoogleJwt = function(googleJwt) {
   var bodyBuf = new Buffer(parts[1], 'base64');
   var header = JSON.parse(headerBuf.toString());
   var body = JSON.parse(bodyBuf.toString());
-  // console.log('header:', header);
-  // console.log('body', body);
 
   return body.sub;
 }
 
 app.get('/auth/code', function(req, res) {
   console.log('code', req.query.code);
-  // console.log('client_id', credentials.installed.client_id);
-  // console.log('client_secret', credentials.installed.client_secret);
 
   var code = req.query.code || '4/bIpLbbfrtcXw4cwdXMXrIWQJizhPjUggK_jbNmiM0uc.0u9pik9gXK4QEnp6UAPFm0E02rd3mwI';
 
@@ -111,7 +106,7 @@ app.get('/auth/code', function(req, res) {
 
   request.post(url, { form: payload }, function(error, response, body) {
     if (error) console.log('error using auth code:', error)
-    console.log('body:', body);
+    // console.log('body:', body);
 
     body = JSON.parse(body);
 
@@ -122,6 +117,7 @@ app.get('/auth/code', function(req, res) {
     });
 
     console.log('responding with jwt');
+    console.log(jwtToken);
 
     new User({
       googleId: userId
@@ -129,11 +125,14 @@ app.get('/auth/code', function(req, res) {
       if (!user) {
         console.log('new user');
 
+        var tokenExpirationDate = moment().add(body.expires_in, 'seconds');
+
         new User({
           googleId: userId,
           accessToken: body.access_token,
           refreshToken: body.refresh_token,
           secondsValid: body.expires_in,
+          tokenExpDate: tokenExpirationDate
         }).save().then(function(user) {
           console.log('New user saved!', user)
         });
@@ -144,6 +143,7 @@ app.get('/auth/code', function(req, res) {
           accessToken: body.access_token,
           refreshToken: body.refresh_token,
           secondsValid: body.expires_in,
+          tokenExpDate: tokenExpirationDate
         }).then(function(user) {
           console.log('User updated')
         })
@@ -164,7 +164,7 @@ app.use('/cal', calRouter);
 
 var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
 var authenticate = require('./routes/authentication')(app, calRouter, jwt);
-var main = require('./routes/main.js')(app, calRouter, User, userCalendar, calendar, googleAuth, credentials);
+var main = require('./routes/main.js')(app, calRouter, User, userCalendar, calendar, googleAuth, credentials, getNewAccessToken);
 
 app.listen(port, function() {
   console.log('Listening on port', port)
