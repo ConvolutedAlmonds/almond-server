@@ -1,8 +1,8 @@
 var qs = require('querystring');
-var moment = require('moment');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
 var async = require('async');
+var parseSeconds = require('./../utils/time.js');
 
 var directionsApiKey = 'AIzaSyA1E7LH5MXVc6ew0fX9K6zC-xLVsCEjDXM'
 var googleDirectionsEndPoint = 'https://maps.googleapis.com/maps/api/directions/json';
@@ -46,24 +46,6 @@ var GoogleDirectionsUrl = function(origin, destination, travelMode, arrivalTime,
 };
 
 /**
- * Converts number of seconds to readable format - 1 hour 23 mins, etc. 
- */
-var secondsToReadable = function(numSeconds) {
-  var result = '';
-  var duration = moment.duration(numSeconds, 'seconds');
-  var hours = Math.floor(duration.asHours());
-  var mins = Math.floor(duration.asMinutes()) - hours * 60;
-
-  if (hours) result += hours + 'h '
-
-  result += mins + 'm'
-
-  // mins > 1 ? result += mins + ' mins ' : result += mins + ' hour '
-
-  return result;
-};
-
-/**
  * Builds up tasks array of Google Directions API calls to pass to async.parallel.
  * Parses some of the response data to add total duration, total distance, and related travel mode summaries to the top level of each route object.
  */
@@ -102,7 +84,7 @@ var createApiRequests = function(travelModes, origin, destination, arrivalTime, 
           for (var mode in modeDurations) {
             var tuple = [];
             tuple.push(mode.toLowerCase());
-            tuple.push(secondsToReadable(modeDurations[mode]));
+            tuple.push(parseSeconds(modeDurations[mode]));
             route.durationByMode.push(tuple);
           }
 

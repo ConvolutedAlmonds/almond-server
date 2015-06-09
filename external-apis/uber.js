@@ -2,6 +2,7 @@ var qs = require('querystring');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
 var async = require('async');
+var parseSeconds = require('./../utils/time.js');
 
 var uberApiEndpoint = 'https://api.uber.com/v1/estimates/';
 
@@ -46,27 +47,62 @@ module.exports = {
     async.parallel({
       priceEstimate: function(cb) {
         request(requestUrls.urls.priceEstimate).spread(function(response, body) {
-          cb(null, JSON.parse(body));
+          var data = JSON.parse(body);
+          data.prices.forEach(function(price) {
+            price.parsedArrivalTime = parseSeconds(price.duration);
+          })
+          // console.log(data);
+          cb(null, data);
         }).catch(function(err) {
             console.error('Error getting routes:', err);
         });
       },
       timeEstimate: function(cb) {
         request(requestUrls.urls.timeEstimate).spread(function(response, body) {
-          cb(null, JSON.parse(body));
+          var data = JSON.parse(body);
+          data.times.forEach(function(time) {
+            time.parsedDuration = parseSeconds(time.estimate);
+          })
+          // console.log(data);
+          cb(null, data);
         }).catch(function(err) {
             console.error('Error getting routes:', err);
         });
       }
     },
-    // Callback on returned reuslts
+    // Format results and return with callback
     function(err, results) {
       if (err) {
-        console.log('Error collecting async results:', err);
         callback(err);
       } else {
-        // console.log(results);
-        callback(results);
+        var combinedResults = {};
+        results.priceEstimate.prices.forEach(function(estimate) {
+          var uberType = estimate.localized_display_name;
+          if (!combinedResults[uberType]) {
+            combinedResults[uberType] = {};
+          }
+          for (var property in estimate) {
+            var newKey = 'price_' + property;
+            combinedResults[uberType][newKey] = estimate[property];
+          }
+        });
+
+        results.timeEstimate.times.forEach(function(estimate) {
+          var uberType = estimate.localized_display_name;
+          if (!combinedResults[uberType]) {
+            combinedResults[uberType] = {};
+          }
+          for (var property in estimate) {
+            var newKey = 'time_' + property;
+            combinedResults[uberType][newKey] = estimate[property];
+          }
+        });
+        var data = [];
+        for (var uberCar in combinedResults) {
+          data.push(combinedResults[uberCar])
+        }
+
+        callback(data);
       }
     });
 

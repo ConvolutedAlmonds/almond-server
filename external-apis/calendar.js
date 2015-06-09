@@ -6,14 +6,16 @@ var authorize = function(credentials, googleAuth, user, callback) {
   var auth = new googleAuth();
   var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
+  var dummyToken = "ya29.jAFsssNEDEbhxxKMm_kKoQ4EjrU8oWGPevrHxHh54vQE3iBGRO1bcm2yGRJY0cXaSy8tdGH4hhpYpw";
+  var dummySecret = "1/WbQQE5-MIl1l2-cEEDt-S3m8l3ir88QeEUntrqNti3BIgOrJDtdun6zK6XiATCKT";
+
   oauth2Client.credentials = {
-    access_token: user.googleToken,
+    access_token: user.attributes.accessToken,
     token_type:'Bearer',
-    refresh_token: user.googleTokenSecret
+    refresh_token: user.attributes.refreshToken,    
     // expiry_date: user.profile.exp
   };
 
-  // console.log(oauth2Client);
   callback(oauth2Client);
 };
 
@@ -29,7 +31,7 @@ module.exports = {
         if (err) {
           console.log('ERROR:', err)
         } else {
-          // console.log(response);
+          console.log(response);
           callback(response);
         }
       });
@@ -38,9 +40,7 @@ module.exports = {
 
   getEvents: function(calendar, googleAuth, credentials, user, callback) {
 
-    // console.log('Credentials:', credentials);
     authorize(credentials, googleAuth, user, function(auth) {
-      // console.log('Auth:', auth)
       calendar.events.list({
         auth: auth,
         calendarId: 'primary',
@@ -53,7 +53,6 @@ module.exports = {
           console.log('There was an error contacting the Calendar service: ' + err);
           return;
         } else {
-          // console.log(response);
           callback(response);
         }
       });
