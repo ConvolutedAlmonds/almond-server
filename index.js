@@ -125,7 +125,8 @@ app.get('/auth/code', function(req, res) {
       if (!user) {
         console.log('new user');
 
-        var tokenExpirationDate = moment().add(body.expires_in, 'seconds');
+        var tokenExpirationDate = moment().add(body.expires_in, 'seconds').format();
+        console.log('first token exp date', tokenExpirationDate)
 
         new User({
           googleId: userId,
@@ -139,14 +140,6 @@ app.get('/auth/code', function(req, res) {
 
       } else {
         console.log('user already exists')
-        user.save({
-          accessToken: body.access_token,
-          refreshToken: body.refresh_token,
-          secondsValid: body.expires_in,
-          tokenExpDate: tokenExpirationDate
-        }).then(function(user) {
-          console.log('User updated')
-        })
       }
     })
 
