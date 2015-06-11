@@ -97,6 +97,9 @@ module.exports = {
 
         calendarRequests.forEach(function(calendar) {
           calendar.items.forEach(function(item) {
+
+            if (!item.location) item.location = 'No location';
+
             if (item.start.dateTime ) {
               events.push(item);
               item.start.formattedDate = moment(item.start.dateTime).format('MMMM Do YYYY');
@@ -113,7 +116,14 @@ module.exports = {
           return moment(bDate).isBefore(aDate);
         });
 
-        callback(events);
+        var monthAndDay = moment().format('MMMM Do');
+
+        var eventsResponse = {
+          events: events,
+          monthAndDay: monthAndDay
+        };
+
+        callback(eventsResponse);
 
       });
     });

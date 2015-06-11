@@ -54,7 +54,8 @@ module.exports = {
           // console.log(data);
           cb(null, data);
         }).catch(function(err) {
-            console.error('Error getting routes:', err);
+            // console.error('Error getting uber prices:', err);
+          cb(err, null);
         });
       },
       timeEstimate: function(cb) {
@@ -66,14 +67,15 @@ module.exports = {
           // console.log(data);
           cb(null, data);
         }).catch(function(err) {
-            console.error('Error getting routes:', err);
+            // console.error('Error getting uber times:', err);
+          cb(err, null);
         });
       }
     },
     // Format results and return with callback
     function(err, results) {
       if (err) {
-        callback(err);
+        callback(err, results);
       } else {
         var combinedResults = {};
         results.priceEstimate.prices.forEach(function(estimate) {

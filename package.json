@@ -37,7 +37,8 @@
     "passport-google-oauth": "^0.2.0",
     "pg": "^4.3.0",
     "redis": "^0.12.1",
-    "request": "^2.57.0"
+    "request": "^2.57.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "chai": "^2.3.0",
