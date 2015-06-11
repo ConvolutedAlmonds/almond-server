@@ -31,17 +31,22 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
     },
 
     function(err, results) {
-      if (err) console.log('Error in routes', err)
-      // var data = results;
-      res.status(200);
-      results.misc = {};
-      results.misc.origin = origin;
-      results.misc.destination = {
-        longitude: destination.longitude,
-        latitude: destination.latitude,
-        address: req.body.destAddress
-      };
-      res.json(results);
+      if (err) {
+        console.log('Error in routes api', err);
+        res.status(400);
+        res.end();
+      } else {
+
+        res.status(200);
+        results.misc = {};
+        results.misc.origin = origin;
+        results.misc.destination = {
+          longitude: destination.longitude,
+          latitude: destination.latitude,
+          address: req.body.destAddress
+        };
+        res.json(results);
+      }
     });
   });
 };
