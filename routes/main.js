@@ -19,28 +19,31 @@ module.exports = function(app, router, User, userCalendar, calendar, googleAuth,
 
         // console.log(user.attributes);
 
-        var currentDate = moment();
         var tokenExpDate = user.attributes.tokenExpDate; 
         var refreshToken = user.attributes.refreshToken;
 
-        // console.log('checking access_token expiration');
-        // console.log(currentDate.format());
-        // console.log('is after?')
-        // console.log(tokenExpDate)
+        console.log('checking access_token expiration');
+        console.log(moment().format());
+        console.log('is after?')
+        console.log(tokenExpDate)
 
-        if (moment(currentDate).isAfter(tokenExpDate)) {
+        if (moment().isAfter(tokenExpDate)) {
           console.log('need new access token!');
           getNewAccessToken(refreshToken, credentials, function(response) {
 
-            console.log('new access token?', response)
+
+            response = JSON.parse(response);
+            console.log('new access token?', response.access_token)
+            tokenExpirationDate = moment().add(response.expires_in, 'seconds').format();
 
             user.save({
               accessToken: response.access_token,
               secondsValid: response.expires_in,
-              tokenExpDate: tokenExpDate
+              tokenExpDate: tokenExpirationDate
             }).then(function(user) {
               console.log('New access token saved', user)
               userCalendar.getAllEvents(calendar, googleAuth, credentials, user, function(events) {
+                ('success! responding with events and access_token refreshed');
                 res.status(200);
                 res.json(events);
               });
@@ -49,6 +52,7 @@ module.exports = function(app, router, User, userCalendar, calendar, googleAuth,
           })
         } else {
           userCalendar.getAllEvents(calendar, googleAuth, credentials, user, function(events) {
+            console.log('success! responding with events');
             res.status(200);
             res.json(events);
           });
