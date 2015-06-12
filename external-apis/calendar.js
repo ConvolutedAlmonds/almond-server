@@ -1,4 +1,5 @@
 var moment = require('moment');
+var timezone = require('moment-timezone');
 
 var authorize = function(credentials, googleAuth, user, callback) {
 
@@ -36,11 +37,12 @@ var getCalendarIds = function(calendar, googleAuth, credentials, user, callback)
         console.log('calendars found');
         response.items.forEach(function(calendar) {
           if (calendar.id !== 'en.usa#holiday@group.v.calendar.google.com' && calendar.id !== '#contacts@group.v.calendar.google.com') {
+            // console.log(calendar);
             calendarIds.push(calendar.id)
           }
         });
 
-        console.log(calendarIds);
+        // console.log(calendarIds);
         callback(calendarIds);
       }
 
@@ -96,15 +98,30 @@ module.exports = {
       makeCalendarRequests(calendar, calendarIds, credentials, googleAuth, user, function(calendarRequests) {
 
         calendarRequests.forEach(function(calendar) {
+          var timeZone = calendar.timeZone;
+
           calendar.items.forEach(function(item) {
 
             if (!item.location) item.location = 'No location';
 
             if (item.start.dateTime ) {
-              events.push(item);
               item.start.formattedDate = moment(item.start.dateTime).format('MMMM Do YYYY');
               item.start.formattedTime = moment(item.start.dateTime).format('h:mm a');
               item.end.formattedTime = moment(item.end.dateTime).format('h:mm a');
+
+              item.start.zoneTime = timezone(item.start.dateTime).tz(timeZone).format('h:mm a');
+              item.end.zoneTime = timezone(item.end.dateTime).tz(timeZone).format('h:mm a');
+
+              // console.log('----')
+              // console.log('item:', item.summary)
+              // console.log('start time', item.start.dateTime);
+              // console.log('formatted start time', item.start.formattedTime);
+              // console.log(item.start.zoneTime);
+              // console.log(item.end.zoneTime)
+              // console.log('end time', item.end.dateTime);
+              // console.log('formatted end time', item.end.formattedTime)
+              // console.log('----')
+              events.push(item);
             }
           });
         });
