@@ -29,7 +29,8 @@ module.exports = function(app, router, User, userCalendar, calendar, googleAuth,
 
         if (moment().isAfter(tokenExpDate)) {
           console.log('need new access token!');
-          getNewAccessToken(refreshToken, credentials, function(response) {
+          getNewAccessToken(refreshToken, credentials, function(err, response) {
+            if (err) console.log('Error refreshing token:', err);
             console.log('response', response);
 
             response = JSON.parse(response);

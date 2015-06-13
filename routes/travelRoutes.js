@@ -36,7 +36,7 @@ module.exports = function(app, router, nohm, UserModel, userCalendar, userMap, u
         res.status(400);
         res.end();
       } else {
-
+        console.log('Sending back routes')
         res.status(200);
         results.misc = {};
         results.misc.origin = origin;
