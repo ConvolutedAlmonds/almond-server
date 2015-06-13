@@ -15,4 +15,5 @@ module.exports = function(numSeconds) {
   result += mins + 'm'
 
   return result;
+  
 };

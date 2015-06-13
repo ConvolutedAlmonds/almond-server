@@ -1,7 +1,9 @@
-var qs = require('querystring');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
 
+/**
+ * Exchanges auth code from client for refresh token and access token
+ */
 module.exports = function(refreshToken, credentials, callback) {
   var refreshEndpoint = 'https://www.googleapis.com/oauth2/v3/token';
 
@@ -14,10 +16,7 @@ module.exports = function(refreshToken, credentials, callback) {
     '&grant_type=refresh_token';
 
   request.post(refreshUrl, function (err, httpResponse, body) {
-    callback(body)
+    callback(err, body)
   })
 
-
 };
-
-
