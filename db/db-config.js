@@ -1,5 +1,8 @@
 var Bookshelf = require('bookshelf');
 
+/**
+ * Connects to either deployment attached db (if available), or else local db
+ */
 var knex =  !process.env.RDS_HOSTNAME ? require('./local_config.js') :
   require('knex')({
   client: 'pg',
