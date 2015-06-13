@@ -111,16 +111,6 @@ module.exports = {
 
               item.start.zoneTime = timezone(item.start.dateTime).tz(timeZone).format('h:mm a');
               item.end.zoneTime = timezone(item.end.dateTime).tz(timeZone).format('h:mm a');
-
-              // console.log('----')
-              // console.log('item:', item.summary)
-              // console.log('start time', item.start.dateTime);
-              // console.log('formatted start time', item.start.formattedTime);
-              // console.log(item.start.zoneTime);
-              // console.log(item.end.zoneTime)
-              // console.log('end time', item.end.dateTime);
-              // console.log('formatted end time', item.end.formattedTime)
-              // console.log('----')
               events.push(item);
             }
           });

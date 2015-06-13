@@ -23,8 +23,7 @@ module.exports = function(app, router, jwt) {
 
       } else {
         console.log('token not found');
-        // if there is no token
-        // return an error
+        // if there is no token, return an error
         return res.status(403).send({
             success: false,
             message: 'No token provided.'
