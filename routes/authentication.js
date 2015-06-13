@@ -6,7 +6,6 @@ module.exports = function(app, router, jwt) {
     // check header or url parameters or post parameters for token
       var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-      // decode token
       if (token) {
 
         console.log('token found:', req.headers['x-access-token'])
@@ -24,8 +23,8 @@ module.exports = function(app, router, jwt) {
 
       } else {
         console.log('token not found');
-        // if there is no token
-        // return an error
+        
+        // if there is no token, return an error
         return res.status(403).send({
             success: false,
             message: 'No token provided.'

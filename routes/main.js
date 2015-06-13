@@ -37,7 +37,7 @@ module.exports = function(app, router, User, userCalendar, calendar, googleAuth,
             tokenExpirationDate = moment().add(response.expires_in, 'seconds').format();
 
             user.save({
-              accessToken: response.access_token,
+              accessToken: response.access_token ,
               secondsValid: response.expires_in,
               tokenExpDate: tokenExpirationDate
             }).then(function(user) {
