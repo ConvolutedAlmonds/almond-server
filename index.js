@@ -3,12 +3,11 @@ var app = express();
 var apiRouter = express.Router();
 var calRouter = express.Router();
 var authRouter = express.Router();
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 var calendar = google.calendar('v3');
 var jwt = require('jsonwebtoken');
-var passport = require('passport');
 var async = require('async');
 var credentials = require('./config.js');
 var userCalendar = require('./external-apis/calendar.js');
@@ -44,21 +43,18 @@ app.use('/auth', authRouter);
 
 // Set route for exchanging authorization code client side Google OAuth for jwt tokens
 // Attaches any decoded Google ID on req.decoded
-var authExchange = require('./routes/authExchange.js')(app, authRouter, credentials, request, User, jwt);
+require('./routes/authExchange.js')(app, authRouter, credentials, request, User, jwt);
 
 // Set route for returning travel data to client
-var api = require('./routes/api.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
+require('./routes/travelRoutes.js')(app, apiRouter, null, User, userCalendar, userMap, uber, calendar, googleAuth, credentials);
 
 // Set authentication middleware to protect following Calendar route from clients without verified jwt tokens
-var authMiddleware = require('./middleware/authentication')(app, calRouter, jwt);
+require('./middleware/authentication')(app, calRouter, jwt);
 
 // Set route for returning user's calendar events to client
-var main = require('./routes/main.js')(app, calRouter, User, userCalendar, calendar, googleAuth, credentials, getNewAccessToken);
+require('./routes/calendarEvents.js')(app, calRouter, User, userCalendar, calendar, googleAuth, credentials, getNewAccessToken);
 
 app.listen(port, function() {
   console.log('Listening on port', port)
 });
-
-
-
 
